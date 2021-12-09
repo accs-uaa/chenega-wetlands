@@ -10,6 +10,8 @@
 
 Create a new project if necessary and enable API access for Google Cloud Compute Engine. Projects on Google Cloud provide a way to organize similar resource needs and should be more general than the specific funded work project. This document uses the "accs-geospatial-processing" project.
 
+Navigate to the Google Cloud Platform APIs & Services menu for the project and enable the Google Earth Engine, Google Drive, and Compute Engine APIs if not already enabled.
+
 ### Create a storage bucket for the project
 
 Create a new storage bucket. Select "Multiregional" and make the multiregion the same as your local machine location. Data can be accessed across regions regardless of which "multiregion" is selected. Select "standard" for storage type. If uploading private data, then select the option to enforce public access prevention.
@@ -23,7 +25,7 @@ Use the "gsutil cp -r" command in Google Cloud SDK to copy data to and from the 
 We upload an image composite for segmentation:
 
 ```
-gsutil cp -r N:/ACCS_Work/Projects/VegetationEcology/Data/Data_Input/imagery/processed/segmentation_imagery.tif gs://chenega-wetlands/gee-assets/
+gsutil cp -r F:/ACCS_Work/Projects/VegetationEcology/EPA_Chenega/Data/Data_Input/imagery/maxar/processed/segmentation_imagery.tif gs://chenega-wetlands/gee-assets/
 ```
 
 Once the data have been uploaded to the Compute storage bucket, they can be ingested in GEE. 
