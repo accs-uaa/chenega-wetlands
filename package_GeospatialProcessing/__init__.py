@@ -10,4 +10,6 @@
 # Import functions from modules
 from package_GeospatialProcessing.arcpyGeoprocessing import arcpy_geoprocessing
 from package_GeospatialProcessing.compositeSegmentationImagery import composite_segmentation_imagery
+from package_GeospatialProcessing.downloadFromDrive import download_from_drive
+from package_GeospatialProcessing.listFromDrive import list_from_drive
 
