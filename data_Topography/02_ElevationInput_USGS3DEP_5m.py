@@ -29,7 +29,7 @@ work_geodatabase = os.path.join(project_folder, 'EPA_Chenega.gdb')
 chenega_raster = os.path.join(project_folder, 'Data_Input/Chenega_ModelArea.tif')
 
 # Define output datasets
-output_raster = os.path.join(topography_folder, 'Elevation_5m_Float.tif')
+output_raster = os.path.join(topography_folder, 'float/Elevation.tif')
 
 #### CREATE COMPOSITE DEM
 

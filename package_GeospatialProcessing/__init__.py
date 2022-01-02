@@ -9,6 +9,7 @@
 
 # Import functions from modules
 from package_GeospatialProcessing.arcpyGeoprocessing import arcpy_geoprocessing
+from package_GeospatialProcessing.calculateTopographicProperties import calculate_topographic_properties
 from package_GeospatialProcessing.compositeSegmentationImagery import composite_segmentation_imagery
 from package_GeospatialProcessing.downloadFromCSV import download_from_csv
 from package_GeospatialProcessing.downloadFromDrive import download_from_drive
