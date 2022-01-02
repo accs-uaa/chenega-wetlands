@@ -67,7 +67,7 @@ while reiterate == True:
     file_id_list = list_from_drive(drive_service, google_folder)
 
     # Subset list
-    file_id_subset = file_id_list[0:5]
+    file_id_subset = file_id_list[0:]
     total = len(file_id_subset)
 
     # Download all files in Google Drive Folder
