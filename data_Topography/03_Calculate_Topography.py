@@ -2,8 +2,8 @@
 # ---------------------------------------------------------------------------
 # Calculate topographic properties
 # Author: Timm Nawrocki
-# Last Updated: 2022-01-01
-# Usage: Must be executed in an ArcGIS Pro Python 3.6 installation.
+# Last Updated: 2022-01-02
+# Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
 # Description: "Calculate topographic properties" calculates integer versions of ten topographic indices for each grid using elevation float rasters.
 # ---------------------------------------------------------------------------
 
@@ -31,7 +31,7 @@ elevation_float = os.path.join(input_folder, 'Elevation.tif')
 # Define output datasets
 elevation_integer = os.path.join(output_folder, 'Elevation.tif')
 slope_integer = os.path.join(output_folder, 'Slope.tif')
-aspect_output = os.path.join(output_folder, 'Aspect.tif')
+aspect_integer = os.path.join(output_folder, 'Aspect.tif')
 exposure_output = os.path.join(output_folder, 'Exposure.tif')
 heatload_output = os.path.join(output_folder, 'HeatLoad.tif')
 position_output = os.path.join(output_folder, 'Position.tif')
@@ -47,7 +47,7 @@ kwargs_topography = {'z_unit': 'METER',
                      'input_array': [chenega_raster, elevation_float],
                      'output_array': [elevation_integer,
                                       slope_integer,
-                                      aspect_output,
+                                      aspect_integer,
                                       exposure_output,
                                       heatload_output,
                                       position_output,
