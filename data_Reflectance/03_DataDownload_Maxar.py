@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
-# Download Sentinel-1 Data from Drive
+# Download Maxar data from Drive
 # Author: Timm Nawrocki
-# Last Updated: 2022-01-01
+# Last Updated: 2022-01-02
 # Usage: Must be executed in a Python 3.8 installation with Google API Python Client and PyDrive installed.
-# Description: "Download Sentinel-1 Data from Drive" programmatically downloads Sentinel-1 tiles from a Google Drive folder. The composites must first be calculated in Google Earth Engine and exported to the Google Drive folder.
+# Description: "Download Maxar data from Drive" programmatically downloads Maxar tiles from a Google Drive folder. The composites must first be calculated in Google Earth Engine and exported to the Google Drive folder.
 # ---------------------------------------------------------------------------
 
 # Import packages
@@ -19,14 +19,14 @@ import pickle
 import time
 
 # Define target Google Drive folder
-google_folder = '1VD8ZnzzojZAz8RB_eXxhFc_JjyFaiQbm'
+google_folder = '1-1MxdlgJCj_SeVgjBE5s9qsy5PZIhT_4'
 
 # Set root directory
 drive = 'N:/'
 root_folder = 'ACCS_Work'
 
 # Define folder structure
-data_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data/Data_Input/imagery/sentinel-1/unprocessed')
+data_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data/Data_Input/imagery/maxar/processed')
 credentials_folder = os.path.join(drive, root_folder, 'Administrative/Credentials')
 
 # Change working directory to credentials folder

@@ -82,7 +82,7 @@ print(segmentation_image)
 var image = segmentation_image.select('b1', 'b2', 'b3', 'b4', 'EVI2', 'NDVI', 'NDWI')
 
 // Set seed grid
-var seeds = ee.Algorithms.Image.Segmentation.seedGrid(36);
+var seeds = ee.Algorithms.Image.Segmentation.seedGrid(12);
 
 // Execute Simple Non-Iterative Clustering
 var segments = ee.Algorithms.Image.Segmentation.SNIC({
@@ -90,23 +90,27 @@ var segments = ee.Algorithms.Image.Segmentation.SNIC({
   size: 2,
   compactness: 0,
   connectivity: 4,
-  neighborhoodSize: 128,
+  neighborhoodSize: 64,
   seeds: seeds
-}).select(['b1_mean', 'b2_mean', 'b3_mean', 'b4_mean', 'EVI2_mean', 'NDVI_mean', 'NDWI_mean', 'clusters'],
-['B1', 'B2', 'B3', 'B4', 'EVI2', 'NDVI', 'NDWI', 'clusters']);
+}).reproject({
+  crs: 'EPSG:3338',
+  scale: 2
+}).select(
+  ['b1_mean', 'b2_mean', 'b3_mean', 'b4_mean', 'EVI2_mean', 'NDVI_mean', 'NDWI_mean', 'clusters'],
+  ['B1', 'B2', 'B3', 'B4', 'EVI2', 'NDVI', 'NDWI', 'clusters']);
 var clusters = segments.select('clusters')
 
 // Add RGB composite and clusters to the map.
 Map.addLayer(clusters.randomVisualizer(), {}, 'clusters')
 
-// Parse to single band rasters
-var blue = segments.select('B1')
-var red = segments.select('B2')
-var green = segments.select('B3')
-var nearir = segments.select('B4')
-var evi2 = segments.select('EVI2')
-var ndvi = segments.select('NDVI')
-var ndwi = segments.select('NDWI')
+// Parse image to single band rasters
+var blue = segmentation_image.select('b1')
+var red = segmentation_image.select('b2')
+var green = segmentation_image.select('b3')
+var nearir = segmentation_image.select('b4')
+var evi2 = segmentation_image.select('EVI2')
+var ndvi = segmentation_image.select('NDVI')
+var ndwi = segmentation_image.select('NDWI')
 
 // Export clusters to Google Drive.
 Export.image.toDrive({
@@ -120,7 +124,7 @@ Export.image.toDrive({
 Export.image.toDrive({
   image: blue,
   description: 'Chenega_Maxar_Blue',
-  folder: 'chenega_clusters',
+  folder: 'chenega_maxar',
   scale: 2,
   region: area_feature,
   maxPixels: 1e12
@@ -128,7 +132,7 @@ Export.image.toDrive({
 Export.image.toDrive({
   image: green,
   description: 'Chenega_Maxar_Green',
-  folder: 'chenega_clusters',
+  folder: 'chenega_maxar',
   scale: 2,
   region: area_feature,
   maxPixels: 1e12
@@ -136,7 +140,7 @@ Export.image.toDrive({
 Export.image.toDrive({
   image: red,
   description: 'Chenega_Maxar_Red',
-  folder: 'chenega_clusters',
+  folder: 'chenega_maxar',
   scale: 2,
   region: area_feature,
   maxPixels: 1e12
@@ -144,7 +148,7 @@ Export.image.toDrive({
 Export.image.toDrive({
   image: nearir,
   description: 'Chenega_Maxar_NearIR',
-  folder: 'chenega_clusters',
+  folder: 'chenega_maxar',
   scale: 2,
   region: area_feature,
   maxPixels: 1e12
@@ -152,7 +156,7 @@ Export.image.toDrive({
 Export.image.toDrive({
   image: evi2,
   description: 'Chenega_Maxar_EVI2',
-  folder: 'chenega_clusters',
+  folder: 'chenega_maxar',
   scale: 2,
   region: area_feature,
   maxPixels: 1e12
@@ -160,7 +164,7 @@ Export.image.toDrive({
 Export.image.toDrive({
   image: ndvi,
   description: 'Chenega_Maxar_NDVI',
-  folder: 'chenega_clusters',
+  folder: 'chenega_maxar',
   scale: 2,
   region: area_feature,
   maxPixels: 1e12
@@ -168,7 +172,7 @@ Export.image.toDrive({
 Export.image.toDrive({
   image: ndwi,
   description: 'Chenega_Maxar_NDWI',
-  folder: 'chenega_clusters',
+  folder: 'chenega_maxar',
   scale: 2,
   region: area_feature,
   maxPixels: 1e12

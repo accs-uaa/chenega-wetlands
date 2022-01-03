@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
-# Calculate zonal means
+# Calculate zonal standard deviations
 # Author: Timm Nawrocki
 # Last Updated: 2022-01-02
 # Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
-# Description: "Calculate zonal means" calculates zonal means of input datasets to segments defined in a raster.
+# Description: "Calculate zonal standard deviations" calculates zonal standard deviations of input datasets to segments defined in a raster.
 # ---------------------------------------------------------------------------
 
 # Import packages
@@ -19,9 +19,6 @@ root_folder = 'ACCS_Work'
 
 # Define folder structure
 project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
-topography_folder = os.path.join(project_folder, 'Data_Input/topography/integer')
-sent1_folder = os.path.join(project_folder, 'Data_Input/imagery/sentinel-1/unprocessed')
-sent2_folder = os.path.join(project_folder, 'Data_Input/imagery/sentinel-2/unprocessed')
 maxar_folder = os.path.join(project_folder, 'Data_Input/imagery/maxar/processed')
 output_folder = os.path.join(project_folder, 'Data_Input/zonal')
 
@@ -34,27 +31,6 @@ zone_raster = os.path.join(project_folder, 'Data_Input/imagery/segments/Chenega_
 
 # Create empty raster list
 input_rasters = []
-
-# Create list of topography rasters
-arcpy.env.workspace = topography_folder
-topography_rasters = arcpy.ListRasters('*', 'TIF')
-for raster in topography_rasters:
-    raster_path = os.path.join(topography_folder, raster)
-    input_rasters.append(raster_path)
-
-# Create list of Sentinel-1 rasters
-arcpy.env.workspace = sent1_folder
-sent1_rasters = arcpy.ListRasters('*', 'TIF')
-for raster in sent1_rasters:
-    raster_path = os.path.join(sent1_folder, raster)
-    input_rasters.append(raster_path)
-
-# Create list of Sentinel-2 rasters
-arcpy.env.workspace = sent2_folder
-sent2_rasters = arcpy.ListRasters('*', 'TIF')
-for raster in sent2_rasters:
-    raster_path = os.path.join(sent2_folder, raster)
-    input_rasters.append(raster_path)
 
 # Create list of Maxar rasters
 arcpy.env.workspace = maxar_folder
@@ -79,7 +55,7 @@ for input_raster in input_rasters:
     if arcpy.Exists(output_raster) == 0:
 
         # Create key word arguments
-        kwargs_zonal = {'statistic': 'MEAN',
+        kwargs_zonal = {'statistic': 'STD',
                         'zone_field': 'VALUE',
                         'work_geodatabase': work_geodatabase,
                         'input_array': [chenega_raster, input_raster, zone_raster],
