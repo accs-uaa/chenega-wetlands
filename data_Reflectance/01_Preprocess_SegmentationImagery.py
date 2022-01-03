@@ -22,7 +22,7 @@ root_folder = 'ACCS_Work'
 # Define folder structure
 project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
 unprocessed_folder = os.path.join(project_folder, 'Data_Input/imagery/unprocessed')
-processed_folder = os.path.join(project_folder, 'Data_Input/imagery/processed')
+processed_folder = os.path.join(project_folder, 'Data_Input/imagery/composite')
 
 # Define geodatabases
 work_geodatabase = os.path.join(project_folder, 'EPA_Chenega.gdb')

@@ -20,6 +20,7 @@ def calculate_flow(area_raster, elevation_float, flow_accumulation):
 
     # Import packages
     import arcpy
+    from arcpy.sa import Fill
     from arcpy.sa import FlowAccumulation
     from arcpy.sa import FlowDirection
     from arcpy.sa import Raster
@@ -38,9 +39,13 @@ def calculate_flow(area_raster, elevation_float, flow_accumulation):
     cell_size = arcpy.management.GetRasterProperties(elevation_float, 'CELLSIZEX', '').getOutput(0)
     arcpy.env.cellSize = int(cell_size)
 
+    # Fill elevation raster
+    print('\t\tFilling elevation raster...')
+    fill_raster = Fill(Raster(elevation_float), 3)
+
     # Calculate flow direction
     print('\t\tCalculating flow direction...')
-    direction_raster = FlowDirection(Raster(elevation_float), 'NORMAL', '', 'DINF')
+    direction_raster = FlowDirection(fill_raster, 'NORMAL', '', 'DINF')
 
     # Calculate flow accumulation
     print('\t\tCalculating flow accumulation...')
