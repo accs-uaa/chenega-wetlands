@@ -2,18 +2,15 @@
 # ---------------------------------------------------------------------------
 # Convert multi-band raster to single-band rasters
 # Author: Timm Nawrocki
-# Last Updated: 2022-01-03
+# Last Updated: 2022-01-04
 # Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
 # Description: "Convert multi-band raster to single-band rasters" converts a multi-band raster to single band rasters.
 # ---------------------------------------------------------------------------
 
 # Import packages
-import arcpy
-import datetime
 import os
 from package_GeospatialProcessing import arcpy_geoprocessing
 from package_GeospatialProcessing import parse_raster_band
-import time
 
 # Set root directory
 drive = 'N:/'
