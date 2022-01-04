@@ -45,7 +45,7 @@ def composite_segmentation_imagery(**kwargs):
     segmentation_raster = kwargs['output_array'][1]
 
     # Define intermediate datasets
-    preliminary_raster = os.path.splitext(composite_raster)[0] + '_preliminary.tif'
+    mosaic_raster = os.path.splitext(composite_raster)[0] + '_mosaic.tif'
     reprojected_raster = os.path.splitext(composite_raster)[0] + '_reprojected.tif'
 
     # Set overwrite option
@@ -59,7 +59,7 @@ def composite_segmentation_imagery(**kwargs):
     output_system = arcpy.SpatialReference(output_projection)
 
     # Define mosaic name and location
-    mosaic_location, mosaic_name = os.path.split(preliminary_raster)
+    mosaic_location, mosaic_name = os.path.split(mosaic_raster)
 
     # Determine number of bands in rasters
     band_count = arcpy.Describe(Raster(input_rasters[1])).bandCount
@@ -67,31 +67,35 @@ def composite_segmentation_imagery(**kwargs):
 
     # Mosaic raster tiles to new raster
     print(f'\tMosaicking input rasters with {band_count} bands...')
-    iteration_start = time.time()
-    arcpy.management.MosaicToNewRaster(input_rasters,
-                                       mosaic_location,
-                                       mosaic_name,
-                                       input_system,
-                                       '32_BIT_SIGNED',
-                                       original_size,
-                                       band_count,
-                                       'MAXIMUM',
-                                       'FIRST')
-    # Enforce correct projection
-    arcpy.management.DefineProjection(composite_raster, input_system)
-    # End timing
-    iteration_end = time.time()
-    iteration_elapsed = int(iteration_end - iteration_start)
-    iteration_success_time = datetime.datetime.now()
-    # Report success
-    print(
-        f'\tCompleted at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
-    print('\t----------')
+    # Check if mosaic raster already exists
+    if arcpy.Exists(mosaic_raster) == 0:
+        iteration_start = time.time()
+        arcpy.management.MosaicToNewRaster(input_rasters,
+                                           mosaic_location,
+                                           mosaic_name,
+                                           input_system,
+                                           '32_BIT_SIGNED',
+                                           original_size,
+                                           band_count,
+                                           'MAXIMUM',
+                                           'FIRST')
+        # Enforce correct projection
+        arcpy.management.DefineProjection(mosaic_raster, input_system)
+        # End timing
+        iteration_end = time.time()
+        iteration_elapsed = int(iteration_end - iteration_start)
+        iteration_success_time = datetime.datetime.now()
+        # Report success
+        print(f'\tCompleted at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
+        print('\t----------')
+    # If preliminary raster already exists, report message
+    else:
+        print('\tMosaic raster already exists.')
 
     # Enforce correct values
-    print('\tEnforcing no data values...')
+    print('\tEnforcing correct no data values...')
     iteration_start = time.time()
-    con_raster = Con(IsNull(Raster(preliminary_raster)), 255, Raster(preliminary_raster))
+    con_raster = Con(IsNull(Raster(mosaic_raster)), 255, Raster(mosaic_raster))
     arcpy.management.CopyRaster(con_raster,
                                 composite_raster,
                                 '',
