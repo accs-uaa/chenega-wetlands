@@ -109,7 +109,7 @@ def calculate_zonal_statistics(**kwargs):
     iteration_success_time = datetime.datetime.now()
     # Report success
     print(
-        f'\tFinished at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
+        f'\tCompleted at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
     print('\t----------')
 
     # Return success message

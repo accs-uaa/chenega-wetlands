@@ -67,7 +67,7 @@ def create_grid_index(**kwargs):
     iteration_elapsed = int(iteration_end - iteration_start)
     iteration_success_time = datetime.datetime.now()
     # Report success
-    print(f'\tFinished creating grid index at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
+    print(f'\tCompleted at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
     print('\t----------')
 
     # If spatial join feature is defined
@@ -108,7 +108,7 @@ def create_grid_index(**kwargs):
         iteration_elapsed = int(iteration_end - iteration_start)
         iteration_success_time = datetime.datetime.now()
         # Report success
-        print(f'\tFinished grid index at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
+        print(f'\tCompleted at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
         print('\t----------')
     else:
         print('\tExporting grid index...')
@@ -119,7 +119,7 @@ def create_grid_index(**kwargs):
         iteration_elapsed = int(iteration_end - iteration_start)
         iteration_success_time = datetime.datetime.now()
         # Report success
-        print(f'\tFinished grid index at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
+        print(f'\tCompleted at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
         print('\t----------')
 
     # Remove intermediate datasets

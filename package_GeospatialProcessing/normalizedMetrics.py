@@ -89,7 +89,7 @@ def normalized_metrics(**kwargs):
     iteration_success_time = datetime.datetime.now()
     # Report success for iteration
     print(
-        f'\tProjection completed at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
+        f'\tCompleted at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
     print('\t----------')
 
     # Report success

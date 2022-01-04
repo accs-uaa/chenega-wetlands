@@ -102,5 +102,7 @@ def postprocess_segments(**kwargs):
     print(
         f'\tCompleted at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
     print('\t----------')
+
+    # Return success message
     out_process = f'Successfully created image segment raster and vectors.'
     return out_process
