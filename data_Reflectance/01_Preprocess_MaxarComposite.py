@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
-# Pre-process imagery for segmentation
+# Pre-process Maxar composite for segmentation
 # Author: Timm Nawrocki
-# Last Updated: 2021-12-08
+# Last Updated: 2022-01-03
 # Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
-# Description: "Pre-process imagery for segmentation" reprojects and resamples multi-band image rasters to prepare for upload to Google Earth Engine for segmentation.
+# Description: "Pre-process Maxar composite for segmentation" reprojects and resamples multi-band image rasters to prepare for upload to Google Earth Engine for segmentation.
 # ---------------------------------------------------------------------------
 
 # Import packages
@@ -21,8 +21,8 @@ root_folder = 'ACCS_Work'
 
 # Define folder structure
 project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
-unprocessed_folder = os.path.join(project_folder, 'Data_Input/imagery/unprocessed')
-processed_folder = os.path.join(project_folder, 'Data_Input/imagery/composite')
+tile_folder = os.path.join(project_folder, 'Data_Input/imagery/maxar/tiles')
+composite_folder = os.path.join(project_folder, 'Data_Input/imagery/maxar/composite')
 
 # Define geodatabases
 work_geodatabase = os.path.join(project_folder, 'EPA_Chenega.gdb')
@@ -31,21 +31,21 @@ work_geodatabase = os.path.join(project_folder, 'EPA_Chenega.gdb')
 chenega_raster = os.path.join(project_folder, 'Data_Input/Chenega_ModelArea.tif')
 
 # Define output datasets
-imagery_composite = os.path.join(processed_folder, 'Chenega_MaxarComposite_WGS84.tif')
-imagery_segmentation = os.path.join(processed_folder, 'Chenega_MaxarComposite_AKALB.tif')
+imagery_composite = os.path.join(composite_folder, 'Chenega_MaxarComposite_WGS84.tif')
+imagery_segmentation = os.path.join(composite_folder, 'Chenega_MaxarComposite_AKALB.tif')
 
 # List imagery tiles
 print('Searching for imagery tiles...')
 # Start timing function
 iteration_start = time.time()
 # Set environment workspace to the folder containing the grid rasters
-arcpy.env.workspace = unprocessed_folder
+arcpy.env.workspace = tile_folder
 # Create a raster list using the Arcpy List Rasters function
 unprocessed_list = arcpy.ListRasters('*', 'TIF')
 # Append file names to rasters in list
 unprocessed_tiles = []
 for raster in unprocessed_list:
-    raster_path = os.path.join(unprocessed_folder, raster)
+    raster_path = os.path.join(tile_folder, raster)
     unprocessed_tiles.append(raster_path)
 tiles_length = len(unprocessed_tiles)
 print(f'Composite imagery will be created from {tiles_length} imagery tiles...')

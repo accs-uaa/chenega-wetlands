@@ -25,7 +25,9 @@ def composite_segmentation_imagery(**kwargs):
 
     # Import packages
     import arcpy
+    from arcpy.sa import Con
     from arcpy.sa import ExtractByMask
+    from arcpy.sa import IsNull
     from arcpy.sa import Raster
     import datetime
     import os
@@ -42,6 +44,10 @@ def composite_segmentation_imagery(**kwargs):
     composite_raster = kwargs['output_array'][0]
     segmentation_raster = kwargs['output_array'][1]
 
+    # Define intermediate datasets
+    preliminary_raster = os.path.splitext(composite_raster)[0] + '_preliminary.tif'
+    reprojected_raster = os.path.splitext(composite_raster)[0] + '_reprojected.tif'
+
     # Set overwrite option
     arcpy.env.overwriteOutput = True
 
@@ -53,7 +59,7 @@ def composite_segmentation_imagery(**kwargs):
     output_system = arcpy.SpatialReference(output_projection)
 
     # Define mosaic name and location
-    mosaic_location, mosaic_name = os.path.split(composite_raster)
+    mosaic_location, mosaic_name = os.path.split(preliminary_raster)
 
     # Determine number of bands in rasters
     band_count = arcpy.Describe(Raster(input_rasters[1])).bandCount
@@ -82,14 +88,39 @@ def composite_segmentation_imagery(**kwargs):
         f'\tCompleted at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
     print('\t----------')
 
+    # Enforce correct values
+    print('\tEnforcing no data values...')
+    iteration_start = time.time()
+    con_raster = Con(IsNull(Raster(preliminary_raster)), 255, Raster(preliminary_raster))
+    arcpy.management.CopyRaster(con_raster,
+                                composite_raster,
+                                '',
+                                '',
+                                '-2147483648',
+                                'NONE',
+                                'NONE',
+                                '32_BIT_SIGNED',
+                                'NONE',
+                                'NONE',
+                                'TIFF',
+                                'NONE',
+                                'CURRENT_SLICE',
+                                'NO_TRANSPOSE')
+    # End timing
+    iteration_end = time.time()
+    iteration_elapsed = int(iteration_end - iteration_start)
+    iteration_success_time = datetime.datetime.now()
+    # Report success for iteration
+    print(
+        f'\tCompleted at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
+    print('\t----------')
+
     # Set final snap raster
     arcpy.env.snapRaster = area_raster
 
     # Project raster to output coordinate system
     print(f'\tReprojecting composite raster...')
     iteration_start = time.time()
-    # Define intermediate and output raster
-    reprojected_raster = os.path.splitext(composite_raster)[0] + '_reprojected.tif'
     # Multiply composite raster by conversion factor
     converted_raster = Raster(composite_raster) * conversion_factor
     # Reproject raster
@@ -107,7 +138,7 @@ def composite_segmentation_imagery(**kwargs):
     iteration_success_time = datetime.datetime.now()
     # Report success for iteration
     print(
-        f'\tProjection completed at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
+        f'\tCompleted at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
     print('\t----------')
 
     # Extract reprojected raster to area raster
