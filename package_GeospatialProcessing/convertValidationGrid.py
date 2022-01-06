@@ -28,8 +28,8 @@ def convert_validation_grid(**kwargs):
     # Parse key word argument inputs
     work_geodatabase = kwargs['work_geodatabase']
     validation_feature = kwargs['input_array'][0]
-    study_feature = kwargs['input_array'][1]
-    study_area = kwargs['input_array'][2]
+    area_feature = kwargs['input_array'][1]
+    area_raster = kwargs['input_array'][2]
     validation_raster = kwargs['output_array'][0]
 
     # Set overwrite option
@@ -39,8 +39,12 @@ def convert_validation_grid(**kwargs):
     arcpy.env.parallelProcessingFactor = '66%'
 
     # Set snap raster and extent
-    arcpy.env.snapRaster = study_area
-    arcpy.env.extent = Raster(study_area).extent
+    arcpy.env.snapRaster = area_raster
+    arcpy.env.extent = Raster(area_raster).extent
+
+    # Set cell size environment
+    cell_size = arcpy.management.GetRasterProperties(area_raster, 'CELLSIZEX', '').getOutput(0)
+    arcpy.env.cellSize = int(cell_size)
 
     # Set workspace
     arcpy.env.workspace = work_geodatabase
@@ -52,7 +56,7 @@ def convert_validation_grid(**kwargs):
     print(f'\tClipping validation grid index...')
     iteration_start = time.time()
     arcpy.analysis.PairwiseClip(validation_feature,
-                                study_feature,
+                                area_feature,
                                 validation_clip)
     # End timing
     iteration_end = time.time()
@@ -70,7 +74,7 @@ def convert_validation_grid(**kwargs):
                                      validation_raster,
                                      'CELL_CENTER',
                                      '',
-                                     10,
+                                     cell_size,
                                      'BUILD')
     # End timing
     iteration_end = time.time()

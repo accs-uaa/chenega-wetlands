@@ -49,7 +49,7 @@ for input_raster in input_rasters:
 
     # Define output raster
     raster_name = os.path.split(input_raster)[1]
-    output_raster = os.path.join(output_folder, raster_name)
+    output_raster = os.path.join(output_folder, os.path.splitext(raster_name)[0] + '_STD.tif')
 
     # Create zonal summary if output raster does not already exist
     if arcpy.Exists(output_raster) == 0:

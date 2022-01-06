@@ -20,8 +20,8 @@ root_folder = 'ACCS_Work'
 # Define folder structure
 project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
 topography_folder = os.path.join(project_folder, 'Data_Input/topography/integer')
-sent1_folder = os.path.join(project_folder, 'Data_Input/imagery/sentinel-1/unprocessed')
-sent2_folder = os.path.join(project_folder, 'Data_Input/imagery/sentinel-2/unprocessed')
+sent1_folder = os.path.join(project_folder, 'Data_Input/imagery/sentinel-1/processed')
+sent2_folder = os.path.join(project_folder, 'Data_Input/imagery/sentinel-2/processed')
 maxar_folder = os.path.join(project_folder, 'Data_Input/imagery/maxar/processed')
 output_folder = os.path.join(project_folder, 'Data_Input/zonal')
 

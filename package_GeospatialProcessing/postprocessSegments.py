@@ -94,6 +94,8 @@ def postprocess_segments(**kwargs):
     arcpy.management.FeatureToPoint(segments_polygon,
                                     segments_point,
                                     'INSIDE')
+    # Add xy coordinates to points
+    arcpy.management.AddXY(segments_point)
     # End timing
     iteration_end = time.time()
     iteration_elapsed = int(iteration_end - iteration_start)

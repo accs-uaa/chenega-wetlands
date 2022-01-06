@@ -84,7 +84,7 @@ def calculate_zonal_statistics(**kwargs):
     summary_raster = ZonalStatistics(zone_raster,
                                      zone_field,
                                      input_raster,
-                                     'MEAN',
+                                     statistic,
                                      'DATA',
                                      'CURRENT_SLICE',
                                      '',
