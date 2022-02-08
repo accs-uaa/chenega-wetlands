@@ -81,16 +81,20 @@ print(segmentation_image)
 // Select subset of the composite for clustering
 var image = segmentation_image.select('b1', 'b2', 'b3', 'b4', 'EVI2', 'NDVI', 'NDWI')
 
+// Prepare convoluted image
+var kernel = ee.Kernel.gaussian(3);
+var convoluted_image = image.convolve(kernel);
+
 // Set seed grid
 var seeds = ee.Algorithms.Image.Segmentation.seedGrid(12);
 
 // Execute Simple Non-Iterative Clustering
 var segments = ee.Algorithms.Image.Segmentation.SNIC({
-  image: segmentation_image,
+  image: convoluted_image,
   size: 2,
   compactness: 0,
   connectivity: 4,
-  neighborhoodSize: 64,
+  neighborhoodSize: 512,
   seeds: seeds
 }).reproject({
   crs: 'EPSG:3338',
@@ -101,6 +105,7 @@ var segments = ee.Algorithms.Image.Segmentation.SNIC({
 var clusters = segments.select('clusters')
 
 // Add RGB composite and clusters to the map.
+Map.addLayer(convoluted_image, rgbVis, 'Convoluted Composite');
 Map.addLayer(clusters.randomVisualizer(), {}, 'clusters')
 
 // Export clusters to Google Drive.
