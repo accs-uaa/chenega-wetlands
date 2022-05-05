@@ -16,11 +16,11 @@ from package_GeospatialProcessing import composite_segmentation_imagery
 import time
 
 # Set root directory
-drive = 'M:/'
-root_folder = 'EPA_Chenega'
+drive = 'N:/'
+root_folder = 'ACCS_Work'
 
 # Define folder structure
-project_folder = os.path.join(drive, root_folder, 'Data')
+project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
 tile_folder = os.path.join(project_folder, 'Data_Input/imagery/maxar/tiles')
 composite_folder = os.path.join(project_folder, 'Data_Input/imagery/maxar/composite')
 
@@ -63,7 +63,7 @@ arcpy.env.workspace = work_geodatabase
 #### CREATE AND RESAMPLE IMAGE COMPOSITE
 
 # Create key word arguments
-kwargs_composite = {'cell_size': 1,
+kwargs_composite = {'cell_size': 2,
                     'input_projection': 4326,
                     'output_projection': 3338,
                     'geographic_transformation': 'WGS_1984_(ITRF00)_To_NAD_1983',
@@ -76,4 +76,3 @@ kwargs_composite = {'cell_size': 1,
 print('Creating imagery composites...')
 arcpy_geoprocessing(composite_segmentation_imagery, **kwargs_composite)
 print('----------')
-

@@ -98,7 +98,7 @@ var segments = ee.Algorithms.Image.Segmentation.SNIC({
   seeds: seeds
 }).reproject({
   crs: 'EPSG:3338',
-  scale: 1
+  scale: 2
 }).select(
   ['b1_mean', 'b2_mean', 'b3_mean', 'b4_mean', 'EVI2_mean', 'NDVI_mean', 'NDWI_mean', 'clusters'],
   ['B1', 'B2', 'B3', 'B4', 'EVI2', 'NDVI', 'NDWI', 'clusters']);
@@ -113,7 +113,7 @@ Export.image.toDrive({
   image: clusters,
   description: 'Chenega_Segments_Initial',
   folder: 'chenega_clusters',
-  scale: 1,
+  scale: 2,
   region: area_feature,
   maxPixels: 1e12
 });

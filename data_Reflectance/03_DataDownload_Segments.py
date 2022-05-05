@@ -19,15 +19,15 @@ import pickle
 import time
 
 # Define target Google Drive folder
-google_folder = '1_XHtvAd5xLDr3nDF8jNEzmOgkhHVKXV6'
+google_folder = '1uEs4G84nuwjvQvaje8usoiyahQDBJKWX'
 
 # Set root directory
-drive = 'M:/'
-root_folder = 'EPA_Chenega'
+drive = 'N:/'
+root_folder = 'ACCS_Work'
 
 # Set data folder
-data_folder = os.path.join(drive, root_folder, 'M:/EPA_Chenega/Data/Data_Input/imagery/segments')
-credentials_folder = os.path.join(drive, root_folder, 'Credentials')
+data_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data/Data_Input/imagery/segments')
+credentials_folder = os.path.join(drive, root_folder, 'Administrative/Credentials')
 
 # Change working directory to credentials folder
 os.chdir(credentials_folder)
@@ -107,4 +107,3 @@ while reiterate == True:
 
         # Increase count
         count += 1
-

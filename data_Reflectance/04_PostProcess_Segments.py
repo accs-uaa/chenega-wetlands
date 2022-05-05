@@ -13,11 +13,11 @@ from package_GeospatialProcessing import arcpy_geoprocessing
 from package_GeospatialProcessing import postprocess_segments
 
 # Set root directory
-drive = 'M:/'
-root_folder = 'EPA_Chenega'
+drive = 'N:/'
+root_folder = 'ACCS_Work'
 
 # Define folder structure
-project_folder = os.path.join(drive, root_folder, 'Data')
+project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
 segments_folder = os.path.join(project_folder, 'Data_Input/imagery/segments')
 
 # Define geodatabases
@@ -35,7 +35,7 @@ segments_point = os.path.join(work_geodatabase, 'Chenega_Segments_Point')
 #### POST-PROCESS IMAGE SEGMENTS
 
 # Create key word arguments
-kwargs_process = {'cell_size': 1,
+kwargs_process = {'cell_size': 2,
                   'work_geodatabase': work_geodatabase,
                   'input_array': [chenega_raster, segments_initial],
                   'output_array': [segments_final, segments_polygon, segments_point]

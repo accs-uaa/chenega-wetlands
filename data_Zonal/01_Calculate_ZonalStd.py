@@ -14,11 +14,11 @@ from package_GeospatialProcessing import arcpy_geoprocessing
 from package_GeospatialProcessing import calculate_zonal_statistics
 
 # Set root directory
-drive = 'M:/'
-root_folder = 'EPA_Chenega'
+drive = 'N:/'
+root_folder = 'ACCS_Work'
 
 # Define folder structure
-project_folder = os.path.join(drive, root_folder, 'Data')
+project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
 maxar_folder = os.path.join(project_folder, 'Data_Input/imagery/maxar/processed')
 output_folder = os.path.join(project_folder, 'Data_Input/zonal')
 
