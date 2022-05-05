@@ -13,11 +13,11 @@ from package_GeospatialProcessing import arcpy_geoprocessing
 from package_GeospatialProcessing import parse_raster_band
 
 # Set root directory
-drive = 'N:/'
-root_folder = 'ACCS_Work'
+drive = 'M:/'
+root_folder = 'EPA_Chenega/'
 
 # Define folder structure
-project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
+project_folder = os.path.join(drive, root_folder, 'Data/')
 composite_folder = os.path.join(project_folder, 'Data_Input/imagery/maxar/composite')
 processed_folder = os.path.join(project_folder, 'Data_Input/imagery/maxar/processed')
 
