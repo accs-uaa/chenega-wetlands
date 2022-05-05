@@ -8,13 +8,13 @@
 # ---------------------------------------------------------------------------
 
 # Set root directory
-drive = 'N:'
-root_folder = 'ACCS_Work'
+drive = 'M:'
+root_folder = 'EPA_Chenega'
 
 # Define input folders
 project_folder = paste(drive,
                        root_folder,
-                       'Projects/WildlifeEcology/Moose_AlphabetHills/Data',
+                       'Data',
                        sep = '/')
 zonal_folder = paste(project_folder,
                      'Data_Input/zonal',
@@ -33,19 +33,18 @@ output_folder = paste(training_folder,
 
 # Define segments geodatabase
 segments_geodatabase = paste(project_folder,
-                             'AlphabetHills_Segments.gdb',
+                             'EPA_Chenega_Segments.gdb',
                              sep = '/')
 
 # Define input datasets
-grid_raster = paste(grid_folder, 'Alphabet_ValidationGroups.tif', sep = '/')
-training_raster = paste(training_folder, 'processed/Alphabet_Physiography.tif', sep = '/')
+grid_raster = paste(grid_folder, 'Chenega_ValidationGroups.tif', sep = '/')
+training_raster = paste(training_folder, 'processed/Chenega_Training.tif', sep = '/')
 
 # Define grids
-grid_list = c('A2', 'A3', 'A4', 'A5', 'A6',
-             'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7',
-             'C1', 'C2', 'C3', 'C4', 'C5', 'C6', 'C7',
-             'D1', 'D2', 'D3', 'D4', 'D5', 'D6', 'D7',
-             'E1', 'E2', 'E3', 'E4', 'E5', 'E6')
+grid_list = c('A1', 'A2',
+             'B1', 'B2', 'B3',
+             'C1', 'C2', 'C3',
+             'D1', 'D2', 'D3')
 grid_length = length(grid_list)
 
 # Import required libraries for geospatial processing: dplyr, raster, rgdal, sp, and stringr.

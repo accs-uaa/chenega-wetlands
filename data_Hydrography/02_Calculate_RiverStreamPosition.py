@@ -14,22 +14,22 @@ from package_GeospatialProcessing import arcpy_geoprocessing
 from package_GeospatialProcessing import generate_hydrographic_position
 
 # Set root directory
-drive = 'N:/'
-root_folder = 'ACCS_Work'
+drive = 'M:/'
+root_folder = 'EPA_Chenega'
 
 # Define folder structure
-project_folder = os.path.join(drive, root_folder, 'Projects/WildlifeEcology/Moose_AlphabetHills/Data')
+project_folder = os.path.join(drive, root_folder, 'Data')
 topography_folder = os.path.join(project_folder, 'Data_Input/topography/float')
 hydrography_folder = os.path.join(project_folder, 'Data_Input/hydrography')
 
 # Define work geodatabase
-work_geodatabase = os.path.join(project_folder, 'AlphabetHillsBrowseBiomass.gdb')
+work_geodatabase = os.path.join(project_folder, 'EPA_Chenega.gdb')
 
 # Define input datasets
-alphabet_raster = os.path.join(project_folder, 'Data_Input/Alphabet_StudyArea.tif')
+alphabet_raster = os.path.join(project_folder, 'Data_Input/Chenega_ModelArea.tif')
 elevation_raster = os.path.join(topography_folder, 'Elevation.tif')
-river_feature = os.path.join(work_geodatabase, 'Alphabet_Rivers_DEM_Corrected')
-stream_feature = os.path.join(work_geodatabase, 'Alphabet_Streams_DEM_Corrected')
+river_feature = os.path.join(work_geodatabase, 'Chenega_Rivers_DEM')
+stream_feature = os.path.join(work_geodatabase, 'Chenega_Streams_DEM')
 
 # Define output datasets
 river_raster = os.path.join(hydrography_folder, 'River_Position.tif')
