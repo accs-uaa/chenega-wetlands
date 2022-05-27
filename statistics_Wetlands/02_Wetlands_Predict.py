@@ -19,21 +19,21 @@ import datetime
 from package_Statistics import multiclass_predict
 
 # Define round
-round_date = 'round_20220331'
+round_date = 'round_20220510'
 
 # Define number of predicted classes
-class_number = 8
+class_number = 81
 
 #### SET UP DIRECTORIES, FILES, AND FIELDS
 
 # Set root directory
-drive = 'N:/'
-root_folder = 'ACCS_Work'
+drive = 'M:/'
+root_folder = 'EPA_Chenega'
 
 # Define folder structure
 data_folder = os.path.join(drive,
                            root_folder,
-                           'Projects/WildlifeEcology/Moose_AlphabetHills/Data')
+                           'Data')
 input_folder = os.path.join(data_folder, 'Data_Input/training/table')
 model_folder = os.path.join(data_folder, 'Data_Output/model_results', round_date)
 output_folder = os.path.join(data_folder, 'Data_Output/predicted_tables', round_date)
@@ -47,11 +47,10 @@ classifier_path = os.path.join(model_folder, 'classifier.joblib')
 class_variable = ['train_class']
 predictor_all = ['aspect', 'elevation', 'exposure', 'heat_load', 'position', 'radiation', 'roughness', 'slope',
                  'surface_area', 'surface_relief', 'wetness',
-                 'river_position', 'stream_position',
-                 'comp_01_blue', 'comp_02_green', 'comp_03_red', 'comp_04_nearir', 'comp_evi2', 'comp_ndvi', 'comp_ndwi',
-                 'comp_01_blue_std', 'comp_02_green_std', 'comp_03_red_std', 'comp_04_nearir_std',
-                 'comp_evi2_std', 'comp_ndvi_std', 'comp_ndwi_std',
-                 'vh', 'vv', 'burn_diff',
+                 'maxar_01_blue', 'maxar_02_green', 'maxar_03_red', 'maxar_04_nearir', 'maxar_evi2', 'maxar_ndvi',
+                 'maxar_ndwi', 'maxar_01_blue_std', 'maxar_02_green_std', 'maxar_03_red_std', 'maxar_04_nearir_std',
+                 'maxar_evi2_std', 'maxar_ndvi_std', 'maxar_ndwi_std',
+                 'vh', 'vv',
                  's2_06_02_blue', 's2_06_03_green', 's2_06_04_red', 's2_06_05_rededge1', 's2_06_06_rededge2',
                  's2_06_07_rededge3', 's2_06_08_nearir', 's2_06_08a_rededge4', 's2_06_11_shortir1', 's2_06_12_shortir2',
                  's2_06_evi2', 's2_06_nbr', 's2_06_ndmi', 's2_06_ndsi', 's2_06_ndvi', 's2_06_ndwi',
@@ -64,11 +63,8 @@ predictor_all = ['aspect', 'elevation', 'exposure', 'heat_load', 'position', 'ra
                  's2_09_02_blue', 's2_09_03_green', 's2_09_04_red', 's2_09_05_rededge1', 's2_09_06_rededge2',
                  's2_09_07_rededge3', 's2_09_08_nearir', 's2_09_08a_rededge4', 's2_09_11_shortir1', 's2_09_12_shortir2',
                  's2_09_evi2', 's2_09_nbr', 's2_09_ndmi', 's2_09_ndsi', 's2_09_ndvi', 's2_09_ndwi']
-retain_variables = ['segment_id', 'POINT_X', 'POINT_Y',
-                    'fol_alnus', 'fol_betshr', 'fol_bettre', 'fol_dectre', 'fol_dryas', 'fol_empnig', 'fol_erivag',
-                    'fol_picgla', 'fol_picmar', 'fol_rhoshr', 'fol_salshr', 'fol_sphagn', 'fol_vaculi', 'fol_vacvit',
-                    'fol_wetsed']
-prediction = ['physiography']
+retain_variables = ['segment_id', 'POINT_X', 'POINT_Y']
+prediction = ['predict_attr']
 output_columns = retain_variables + predictor_all
 
 # Define random state

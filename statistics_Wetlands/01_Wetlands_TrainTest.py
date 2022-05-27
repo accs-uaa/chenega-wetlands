@@ -10,6 +10,7 @@
 # Import packages
 import glob
 import os
+import numpy as np
 import pandas as pd
 from sklearn.model_selection import LeaveOneGroupOut
 import time
@@ -19,18 +20,18 @@ import datetime
 from package_Statistics import multiclass_train_test
 
 # Define round
-round_date = 'round_20220331'
+round_date = 'round_20220526'
 
 #### SET UP DIRECTORIES, FILES, AND FIELDS
 
 # Set root directory
 drive = 'N:/'
-root_folder = 'ACCS_Work'
+root_folder = 'ACCS_Work/Projects/VegetationEcology/EPA_Chenega'
 
 # Define folder structure
 data_folder = os.path.join(drive,
                            root_folder,
-                           'Projects/WildlifeEcology/Moose_AlphabetHills/Data')
+                           'Data')
 data_input = os.path.join(data_folder, 'Data_Input/training/table')
 data_output = os.path.join(data_folder, 'Data_Output/model_results', round_date)
 
@@ -42,17 +43,17 @@ input_files = glob.glob('*.csv')
 output_csv = os.path.join(data_output, 'prediction.csv')
 output_classifier = os.path.join(data_output, 'classifier.joblib')
 importance_mdi_csv = os.path.join(data_output, 'importance_classifier_mdi.csv')
-confusion_csv = os.path.join(data_output, 'confusion_matrix.csv')
+confusion_csv = os.path.join(data_output, 'confusion_matrix_raw.csv')
 
 # Define variable sets
-class_variable = ['train_class']
+original_variable = ['train_class']
+class_variable = ['simple_class']
 predictor_all = ['aspect', 'elevation', 'exposure', 'heat_load', 'position', 'radiation', 'roughness', 'slope',
                  'surface_area', 'surface_relief', 'wetness',
-                 'river_position', 'stream_position',
-                 'comp_01_blue', 'comp_02_green', 'comp_03_red', 'comp_04_nearir', 'comp_evi2', 'comp_ndvi', 'comp_ndwi',
-                 'comp_01_blue_std', 'comp_02_green_std', 'comp_03_red_std', 'comp_04_nearir_std',
-                 'comp_evi2_std', 'comp_ndvi_std', 'comp_ndwi_std',
-                 'vh', 'vv', 'burn_diff',
+                 'maxar_01_blue', 'maxar_02_green', 'maxar_03_red', 'maxar_04_nearir', 'maxar_evi2', 'maxar_ndvi',
+                 'maxar_ndwi', 'maxar_01_blue_std', 'maxar_02_green_std', 'maxar_03_red_std', 'maxar_04_nearir_std',
+                 'maxar_evi2_std', 'maxar_ndvi_std', 'maxar_ndwi_std',
+                 'vh', 'vv',
                  's2_06_02_blue', 's2_06_03_green', 's2_06_04_red', 's2_06_05_rededge1', 's2_06_06_rededge2',
                  's2_06_07_rededge3', 's2_06_08_nearir', 's2_06_08a_rededge4', 's2_06_11_shortir1', 's2_06_12_shortir2',
                  's2_06_evi2', 's2_06_nbr', 's2_06_ndmi', 's2_06_ndsi', 's2_06_ndvi', 's2_06_ndwi',
@@ -92,17 +93,48 @@ classifier_params = {'n_estimators': 1000,
                      'random_state': rstate}
 
 # Create data frame of input data
+print('Assembling input data...')
 input_length = len(input_files)
-input_data = pd.DataFrame(columns=retain_variables + class_variable + cv_groups + predictor_all)
+input_data = pd.DataFrame(columns=retain_variables + original_variable + cv_groups + predictor_all)
 count = 1
 for file in input_files:
-    print(f'Reading input data {count} of {input_length}...')
+    # Read input file
+    print(f'\tReading input data {count} of {input_length}...')
     data = pd.read_csv(file)
     input_data = input_data.append(data, ignore_index=True, sort=True)
     input_data = input_data.dropna(axis=0, how='any')
-    input_data = input_data[input_data[class_variable[0]] > 0].copy()
+    input_data = input_data[input_data[original_variable[0]] > 0].copy()
     count += 1
+
 print(f'Input data contains {len(input_data)} rows.')
+print('----------')
+
+# Convert training class to simplified class
+print(f'Converting training class to simplified class...')
+# Filter out dropped value
+input_data = input_data[input_data[original_variable[0]] != 12].copy()
+# Set reclass conditions
+conditions = [
+    (input_data[original_variable[0]].isin([1, 2, 3, 27, 28, 29, 30, 31, 32, 33])),
+    (input_data[original_variable[0]].isin([19, 22, 23, 50])),
+    (input_data[original_variable[0]].isin([20, 21, 24, 25, 26, 66, 67, 68, 69, 70])),
+    (input_data[original_variable[0]].isin([4, 5, 34, 35])),
+    (input_data[original_variable[0]].isin([6, 7, 8])),
+    (input_data[original_variable[0]].isin([9, 36, 37, 38, 39, 40])),
+    (input_data[original_variable[0]].isin([10, 11, 13, 14, 15, 16, 17, 18, 41, 42, 43, 44, 45, 46, 47, 48, 49, 71, 72, 73])),
+    (input_data[original_variable[0]].isin([51, 52, 53, 54, 55, 56])),
+    (input_data[original_variable[0]].isin([57, 65])),
+    (input_data[original_variable[0]].isin([58, 59])),
+    (input_data[original_variable[0]].isin([60, 61])),
+    (input_data[original_variable[0]].isin([62, 63, 64])),
+    (input_data[original_variable[0]].isin([74, 75, 76, 77, 78, 79])),
+    (input_data[original_variable[0]].isin([80]))
+]
+# Set reclass values
+values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+# Reclassify original class
+input_data[class_variable[0]] = np.select(conditions, values)
+print('\t----------')
 
 # Define leave one group out cross validation split methods
 outer_cv_splits = LeaveOneGroupOut()
