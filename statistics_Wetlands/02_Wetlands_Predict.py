@@ -19,16 +19,16 @@ import datetime
 from package_Statistics import multiclass_predict
 
 # Define round
-round_date = 'round_20220510'
+round_date = 'round_20220526'
 
 # Define number of predicted classes
-class_number = 81
+class_number = 14
 
 #### SET UP DIRECTORIES, FILES, AND FIELDS
 
 # Set root directory
-drive = 'M:/'
-root_folder = 'EPA_Chenega'
+drive = 'N:/'
+root_folder = 'ACCS_Work/Projects/VegetationEcology/EPA_Chenega'
 
 # Define folder structure
 data_folder = os.path.join(drive,
