@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------------
 # Multi-class model train and test
 # Author: Timm Nawrocki
-# Last Updated: 2022-03-27
+# Last Updated: 2022-03-26
 # Usage: Must be executed in an Anaconda Python 3.9+ distribution.
 # Description: "Multi-class model train and test" is a function that contains a model train and test routine for a multi-class classification model with cross validation.
 # ---------------------------------------------------------------------------

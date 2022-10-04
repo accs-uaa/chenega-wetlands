@@ -47,9 +47,9 @@ classifier_path = os.path.join(model_folder, 'classifier.joblib')
 class_variable = ['train_class']
 predictor_all = ['aspect', 'elevation', 'exposure', 'heat_load', 'position', 'radiation', 'roughness', 'slope',
                  'surface_area', 'surface_relief', 'wetness',
-                 'maxar_01_blue', 'maxar_02_green', 'maxar_03_red', 'maxar_04_nearir', 'maxar_evi2', 'maxar_ndvi',
-                 'maxar_ndwi', 'maxar_01_blue_std', 'maxar_02_green_std', 'maxar_03_red_std', 'maxar_04_nearir_std',
-                 'maxar_evi2_std', 'maxar_ndvi_std', 'maxar_ndwi_std',
+                 'comp_01_blue', 'comp_02_green', 'comp_03_red', 'comp_04_nearir', 'comp_evi2', 'comp_ndvi',
+                 'comp_ndwi', 'comp_01_blue_std', 'comp_02_green_std', 'comp_03_red_std', 'comp_04_nearir_std',
+                 'comp_evi2_std', 'comp_ndvi_std', 'comp_ndwi_std',
                  'vh', 'vv',
                  's2_06_02_blue', 's2_06_03_green', 's2_06_04_red', 's2_06_05_rededge1', 's2_06_06_rededge2',
                  's2_06_07_rededge3', 's2_06_08_nearir', 's2_06_08a_rededge4', 's2_06_11_shortir1', 's2_06_12_shortir2',

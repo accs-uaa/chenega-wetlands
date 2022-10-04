@@ -2,14 +2,14 @@
 # ---------------------------------------------------------------------------
 # Extract covariates to points
 # Author: Timm Nawrocki
-# Last Updated: 2022-03-26
+# Last Updated: 2022-10-03
 # Usage: Must be executed in R 4.0.0+.
 # Description: "Extract covariates to points" extracts data from rasters to points.
 # ---------------------------------------------------------------------------
 
 # Set root directory
-drive = 'M:'
-root_folder = 'EPA_Chenega'
+drive = 'N:'
+root_folder = 'ACCS_Work/Projects/VegetationEcology/EPA_Chenega'
 
 # Define input folders
 project_folder = paste(drive,
@@ -120,22 +120,20 @@ for (grid in grid_list) {
                     surface_area = SurfaceArea,
                     surface_relief = SurfaceRelief,
                     wetness = Wetness,
-                    river_position = River_Position,
-                    stream_position = Stream_Position,
-                    comp_01_blue = Alphabet_Comp_01_Blue,
-                    comp_01_blue_std = Alphabet_Comp_01_Blue_STD,
-                    comp_02_green = Alphabet_Comp_02_Green,
-                    comp_02_green_std = Alphabet_Comp_02_Green_STD,
-                    comp_03_red = Alphabet_Comp_03_Red,
-                    comp_03_red_std = Alphabet_Comp_03_Red_STD,
-                    comp_04_nearir = Alphabet_Comp_04_NearIR,
-                    comp_04_nearir_std = Alphabet_Comp_04_NearIR_STD,
-                    comp_evi2 = Alphabet_Comp_EVI2,
-                    comp_evi2_std = Alphabet_Comp_EVI2_STD,
-                    comp_ndvi = Alphabet_Comp_NDVI,
-                    comp_ndvi_std = Alphabet_Comp_NDVI_STD,
-                    comp_ndwi = Alphabet_Comp_NDWI,
-                    comp_ndwi_std = Alphabet_Comp_NDWI_STD,
+                    comp_01_blue = Chenega_Maxar_01_Blue,
+                    comp_01_blue_std = Chenega_Maxar_01_Blue_STD,
+                    comp_02_green = Chenega_Maxar_02_Green,
+                    comp_02_green_std = Chenega_Maxar_02_Green_STD,
+                    comp_03_red = Chenega_Maxar_03_Red,
+                    comp_03_red_std = Chenega_Maxar_03_Red_STD,
+                    comp_04_nearir = Chenega_Maxar_04_NearIR,
+                    comp_04_nearir_std = Chenega_Maxar_04_NearIR_STD,
+                    comp_evi2 = Chenega_Maxar_EVI2,
+                    comp_evi2_std = Chenega_Maxar_EVI2_STD,
+                    comp_ndvi = Chenega_Maxar_NDVI,
+                    comp_ndvi_std = Chenega_Maxar_NDVI_STD,
+                    comp_ndwi = Chenega_Maxar_NDWI,
+                    comp_ndwi_std = Chenega_Maxar_NDWI_STD,
                     vh = Sent1_vh,
                     vv = Sent1_vv,
                     s2_06_02_blue = Sent2_06_2_blue,
@@ -203,8 +201,8 @@ for (grid in grid_list) {
                     s2_09_ndvi = Sent2_09_ndvi,
                     s2_09_ndwi = Sent2_09_ndwi)
     point_ancillary = point_ancillary %>%
-      dplyr::rename(cv_group = Alphabet_ValidationGroups,
-                    train_class = Alphabet_Physiography) %>%
+      dplyr::rename(cv_group = Chenega_ValidationGroups,
+                    train_class = Chenega_Training) %>%
       dplyr::select(-POINT_X, -POINT_Y)
     
     # Join ancillary data to covariate data

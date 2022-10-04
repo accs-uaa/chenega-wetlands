@@ -1,13 +1,13 @@
 # ---------------------------------------------------------------------------
 # Format confusion matrix
 # Author: Timm Nawrocki, Alaska Center for Conservation Science
-# Last Updated: 2022-05-27
+# Last Updated: 2022-10-04
 # Usage: Script should be executed in R 4.1.0+.
 # Description: "Format confusion matrix" calculates user's and producer's accuracy.
 # ---------------------------------------------------------------------------
 
 # Define version
-round_date = 'round_20220526'
+round_date = 'round_20221004'
 
 # Set root directory
 drive = 'N:'
@@ -40,19 +40,19 @@ raw_data = read.csv(raw_file)
 
 # Change column and row labels
 confusion_matrix = raw_data %>%
-  rename(D1 = X1, FAB = X2, FUB = X3, I2AB = X4,
-         I2EM = X5, I2RS = X6, I2US = X7, PEM = X8, PFOSS = X9,
-         PML = X10, PRB = X11, PSS = X12, R = X13, UPL = X14) %>%
+  rename(D1 = X1, D1AB = X2, FAB = X3, FUB = X4,
+         I2AB = X5, I2EM = X6, I2RS = X7, I2US = X8, PEM = X9,
+         PFOSS = X10, PRB = X11, PSS = X12, R = X13, UPL = X14) %>%
   mutate(Actual = case_when(Actual == 1 ~ 'D1',
-                            Actual == 2 ~ 'FAB',
-                            Actual == 3 ~ 'FUB',
-                            Actual == 4 ~ 'I2AB',
-                            Actual == 5 ~ 'I2EM',
-                            Actual == 6 ~ 'I2RS',
-                            Actual == 7 ~ 'I2US',
-                            Actual == 8 ~ 'PEM',
-                            Actual == 9 ~ 'PFOSS',
-                            Actual == 10 ~ 'PML',
+                            Actual == 2 ~ 'D1AB',
+                            Actual == 3 ~ 'FAB',
+                            Actual == 4 ~ 'FUB',
+                            Actual == 5 ~ 'I2AB',
+                            Actual == 6 ~ 'I2EM',
+                            Actual == 7 ~ 'I2RS',
+                            Actual == 8 ~ 'I2US',
+                            Actual == 9 ~ 'PEM',
+                            Actual == 10 ~ 'PFOSS',
                             Actual == 11 ~ 'PRB',
                             Actual == 12 ~ 'PSS',
                             Actual == 13 ~ 'R',
