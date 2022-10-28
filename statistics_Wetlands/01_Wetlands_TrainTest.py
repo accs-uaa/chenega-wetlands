@@ -20,7 +20,7 @@ import datetime
 from package_Statistics import multiclass_train_test
 
 # Define round
-round_date = 'round_20221004'
+round_date = 'round_20221009'
 
 #### SET UP DIRECTORIES, FILES, AND FIELDS
 
@@ -113,23 +113,20 @@ print('----------')
 print(f'Converting training class to simplified class...')
 # Set reclass conditions
 conditions = [
-    (input_data[original_variable[0]].isin([24, 25, 26, 27, 28])),
-    (input_data[original_variable[0]].isin([23])),
-    (input_data[original_variable[0]].isin([30, 31])),
-    (input_data[original_variable[0]].isin([21, 22, 46, 47, 48, 49, 50])),
+    (input_data[original_variable[0]].isin([21, 22, 23, 24, 25, 26])),
+    (input_data[original_variable[0]].isin([27])),
+    (input_data[original_variable[0]].isin([31, 32, 34, 35])),
     (input_data[original_variable[0]].isin([1, 2, 3])),
     (input_data[original_variable[0]].isin([4, 5, 6])),
-    (input_data[original_variable[0]].isin([7, 8, 9, 10, 11, 29])),
-    (input_data[original_variable[0]].isin([12, 13, 14, 15, 16, 17, 18, 19, 20, 51, 52, 53, 54, 55])),
-    (input_data[original_variable[0]].isin([32, 33, 34, 35, 36, 37])),
-    (input_data[original_variable[0]].isin([38, 45])),
-    (input_data[original_variable[0]].isin([93, 40, 41])),
-    (input_data[original_variable[0]].isin([42, 43, 44])),
-    (input_data[original_variable[0]].isin([56, 57, 58, 59, 60, 61, 62])),
-    (input_data[original_variable[0]].isin([63]))
+    (input_data[original_variable[0]].isin([7, 8, 9, 10, 11])),
+    (input_data[original_variable[0]].isin([12, 13, 14, 15, 16, 17, 18, 19, 20, 36, 37, 38, 39, 40])),
+    (input_data[original_variable[0]].isin([28])),
+    (input_data[original_variable[0]].isin([29])),
+    (input_data[original_variable[0]].isin([30, 33])),
+    (input_data[original_variable[0]].isin([41]))
 ]
 # Set reclass values
-values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
+values = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 # Reclassify original class
 input_data[class_variable[0]] = np.select(conditions, values)
 print('\t----------')

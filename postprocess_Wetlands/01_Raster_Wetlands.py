@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------------
 # Create wetland raster
 # Author: Timm Nawrocki
-# Last Updated: 2022-05-27
+# Last Updated: 2022-10-09
 # Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
 # Description: "Create wetland raster" combines tiles into a wetland raster.
 # ---------------------------------------------------------------------------
@@ -13,7 +13,7 @@ from package_GeospatialProcessing import arcpy_geoprocessing
 from package_GeospatialProcessing import predictions_to_raster
 
 # Set round date
-round_date = 'round_20220526'
+round_date = 'round_20221009'
 
 # Set root directory
 drive = 'N:/'
@@ -43,13 +43,10 @@ wetland_dictionary = {'D1': 1,
                       'I2EM': 5,
                       'I2RS': 6,
                       'I2US': 7,
-                      'PEM': 8,
-                      'PFOSS': 9,
-                      'PML': 10,
-                      'PRB': 11,
-                      'PSS': 12,
-                      'R': 13,
-                      'UPL': 14
+                      'PEM1B': 8,
+                      'PEM1C': 9,
+                      'PFOSS': 10,
+                      'UPL': 11
                       }
 
 # Create key word arguments
@@ -57,7 +54,9 @@ kwargs_attributes = {'segment_folder': segment_folder,
                      'prediction_folder': prediction_folder,
                      'grid_folder': grid_folder,
                      'target_field': 'predict_attr',
+                     'data_type': 'discrete',
                      'attribute_dictionary': wetland_dictionary,
+                     'conversion_factor': None,
                      'work_geodatabase': work_geodatabase,
                      'input_array': [alphabet_raster],
                      'output_array': [output_raster]
