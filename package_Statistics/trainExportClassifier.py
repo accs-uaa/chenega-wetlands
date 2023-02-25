@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------------
 # Train and export multi-class classifier
 # Author: Timm Nawrocki
-# Last Updated: 2022-10-04
+# Last Updated: 2022-03-27
 # Usage: Must be executed in an Anaconda Python 3.9+ distribution.
 # Description: "Train and export multi-class classifier" is a function that trains and exports a classifier and a table of variable importance for a multi-class problem.
 # ---------------------------------------------------------------------------
@@ -24,7 +24,6 @@ def train_export_classifier(classifier_params, input_data, class_variable, predi
     import joblib
     import pandas as pd
     from sklearn.ensemble import RandomForestClassifier
-    from imblearn.ensemble import BalancedRandomForestClassifier
     import time
     import datetime
 

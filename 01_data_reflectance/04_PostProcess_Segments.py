@@ -17,11 +17,11 @@ from package_GeospatialProcessing import postprocess_segments
 import time
 
 # Set root directory
-drive = 'M:/'
-root_folder = 'EPA_Chenega'
+drive = 'N:/'
+root_folder = 'ACCS_Work'
 
 # Define folder structure
-project_folder = os.path.join(drive, root_folder, 'Data')
+project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
 unprocessed_folder = os.path.join(project_folder, 'Data_Input/imagery/segments/unprocessed')
 processed_folder = os.path.join(project_folder, 'Data_Input/imagery/segments/processed')
 

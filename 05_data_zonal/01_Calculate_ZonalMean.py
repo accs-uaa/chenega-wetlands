@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 # ---------------------------------------------------------------------------
-# Calculate zonal standard deviations
+# Calculate zonal means
 # Author: Timm Nawrocki
-# Last Updated: 2022-03-22
+# Last Updated: 2023-02-24
 # Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
-# Description: "Calculate zonal standard deviations" calculates zonal standard deviations of input datasets to segments defined in a raster.
+# Description: "Calculate zonal means" calculates zonal means of input datasets to segments defined in a raster.
 # ---------------------------------------------------------------------------
 
 # Import packages
@@ -14,17 +14,20 @@ from package_GeospatialProcessing import arcpy_geoprocessing
 from package_GeospatialProcessing import calculate_zonal_statistics
 
 # Set root directory
-drive = 'M:/'
-root_folder = 'EPA_Chenega'
+drive = 'N:/'
+root_folder = 'ACCS_Work'
 
 # Define folder structure
-project_folder = os.path.join(drive, root_folder, 'Data')
+project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
 grid_folder = os.path.join(project_folder, 'Data_Input/imagery/segments/gridded')
-composite_folder = os.path.join(project_folder, 'Data_Input/imagery/maxar/processed')
+topography_folder = os.path.join(project_folder, 'Data_Input/topography/integer')
+sent1_folder = os.path.join(project_folder, 'Data_Input/imagery/sentinel-1/unprocessed')
+sent2_folder = os.path.join(project_folder, 'Data_Input/imagery/sentinel-2/processed')
+coastal_folder = os.path.join(project_folder, 'Data_Input/coastline/processed')
 zonal_folder = os.path.join(project_folder, 'Data_Input/zonal')
 
 # Define work geodatabase
-work_geodatabase = os.path.join(project_folder, 'EPA_Chenega.gdb')
+work_geodatabase = os.path.join(project_folder, 'EPA_Chenega_Workspace.gdb')
 
 # Define grids
 grid_list = ['A1', 'A2',
@@ -35,11 +38,32 @@ grid_list = ['A1', 'A2',
 # Create empty raster list
 input_rasters = []
 
-# Create list of Maxar rasters
-arcpy.env.workspace = composite_folder
-composite_rasters = arcpy.ListRasters('*', 'TIF')
-for raster in composite_rasters:
-    raster_path = os.path.join(composite_folder, raster)
+# Create list of topography rasters
+arcpy.env.workspace = topography_folder
+topography_rasters = arcpy.ListRasters('*', 'TIF')
+for raster in topography_rasters:
+    raster_path = os.path.join(topography_folder, raster)
+    input_rasters.append(raster_path)
+
+# Create list of Sentinel-1 rasters
+arcpy.env.workspace = sent1_folder
+sent1_rasters = arcpy.ListRasters('*', 'TIF')
+for raster in sent1_rasters:
+    raster_path = os.path.join(sent1_folder, raster)
+    input_rasters.append(raster_path)
+
+# Create list of Sentinel-2 rasters
+arcpy.env.workspace = sent2_folder
+sent2_rasters = arcpy.ListRasters('*', 'TIF')
+for raster in sent2_rasters:
+    raster_path = os.path.join(sent2_folder, raster)
+    input_rasters.append(raster_path)
+
+# Create list of coastal rasters
+arcpy.env.workspace = coastal_folder
+coastal_rasters = arcpy.ListRasters('*', 'TIF')
+for raster in coastal_rasters:
+    raster_path = os.path.join(coastal_folder, raster)
     input_rasters.append(raster_path)
 
 # Set workspace to default
@@ -65,12 +89,12 @@ for grid in grid_list:
 
         # Define output raster
         raster_name = os.path.split(input_raster)[1]
-        output_raster = os.path.join(output_folder, os.path.splitext(raster_name)[0] + '_STD.tif')
+        output_raster = os.path.join(output_folder, raster_name)
 
         # Create zonal summary if output raster does not already exist
         if arcpy.Exists(output_raster) == 0:
             # Create key word arguments
-            kwargs_zonal = {'statistic': 'STD',
+            kwargs_zonal = {'statistic': 'MEAN',
                             'zone_field': 'VALUE',
                             'work_geodatabase': work_geodatabase,
                             'input_array': [grid_raster, input_raster],

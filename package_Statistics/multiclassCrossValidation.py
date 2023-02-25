@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------------
 # Multi-class cross validation
 # Author: Timm Nawrocki
-# Last Updated: 2022-10-04
+# Last Updated: 2022-12-03
 # Usage: Must be executed in an Anaconda Python 3.9+ distribution.
 # Description: "Multi-class cross validation" is a function that conducts the outer cross validation routine for all partitions of a pre-defined outer cross validation set for a multi-class classification.
 # ---------------------------------------------------------------------------
@@ -52,9 +52,9 @@ def multiclass_cross_validation(classifier_params, outer_cv_splits, input_data, 
         train = train.assign(outer_cv_split_n=count)
         # Insert iteration to test
         test = test.assign(outer_cv_split_n=count)
-        # Concatenate data frames
-        outer_train = pd.concat([outer_train, train], ignore_index=True)
-        outer_test = pd.concat([outer_test, test], ignore_index=True)
+        # Append to data frames
+        outer_train = pd.concat([outer_train, train], axis=0)
+        outer_test = pd.concat([outer_test, test], axis=0)
         # Increase counter
         count += 1
     cv_length = count - 1
@@ -110,7 +110,7 @@ def multiclass_cross_validation(classifier_params, outer_cv_splits, input_data, 
         test_iteration = test_iteration.rename(columns={'prediction': prediction[0]})
 
         # Add the test results to output data frame
-        outer_results = pd.concat([outer_results, test_iteration], ignore_index=True)
+        outer_results = pd.concat([outer_results, test_iteration], axis=0)
         iteration_end = time.time()
         iteration_elapsed = int(iteration_end - iteration_start)
         iteration_success_time = datetime.datetime.now()

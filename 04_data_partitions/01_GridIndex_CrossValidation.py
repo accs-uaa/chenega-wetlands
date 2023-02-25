@@ -16,11 +16,11 @@ from package_GeospatialProcessing import convert_validation_grid
 import os
 
 # Set root directory
-drive = 'M:/'
-root_folder = os.path.join(drive, 'EPA_Chenega')
+drive = 'N:/'
+root_folder = 'ACCS_Work'
 
 # Define folder structure
-project_folder = os.path.join(drive, root_folder, 'Data')
+project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
 
 # Define geodatabases
 work_geodatabase = os.path.join(project_folder, 'EPA_Chenega.gdb')
