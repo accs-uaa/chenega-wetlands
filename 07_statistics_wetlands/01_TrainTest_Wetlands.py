@@ -18,7 +18,7 @@ import datetime
 from package_Statistics import multiclass_train_test
 
 # Define round
-round_date = 'round_20220223'
+round_date = 'round_20230223'
 
 #### SET UP DIRECTORIES, FILES, AND FIELDS
 
@@ -76,7 +76,7 @@ rstate = 21
 #### CONDUCT MODEL TRAIN AND TEST ITERATIONS
 
 # Create a standardized parameter set for a random forest classifier
-classifier_params = {'n_estimators': 50,
+classifier_params = {'n_estimators': 500,
                      'criterion': 'gini',
                      'max_depth': None,
                      'min_samples_split': 2,
