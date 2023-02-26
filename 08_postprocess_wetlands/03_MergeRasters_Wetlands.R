@@ -8,7 +8,7 @@
 # ---------------------------------------------------------------------------
 
 # Define round date
-round_date = 'round_20230224'
+round_date = 'round_20230223'
 
 # Set root directory
 drive = 'N:'

@@ -34,8 +34,22 @@ def train_export_classifier(classifier_params, input_data, class_variable, predi
     # Train classifier
     print('\tTraining full classifier...')
     iteration_start = time.time()
-    export_classifier = RandomForestClassifier(**classifier_params)
-    export_classifier.fit(X_classify, y_classify)
+    # Train first set of trees with gini
+    classifier_params['criterion'] = 'gini'
+    outer_classifier_gini = RandomForestClassifier(**classifier_params)
+    outer_classifier_gini.fit(X_classify, y_classify)
+    # Train second set of trees with entropy
+    classifier_params['criterion'] = 'entropy'
+    outer_classifier_entropy = RandomForestClassifier(**classifier_params)
+    outer_classifier_entropy.fit(X_classify, y_classify)
+    # Train third set of trees with log_loss
+    classifier_params['criterion'] = 'log_loss'
+    outer_classifier_logloss = RandomForestClassifier(**classifier_params)
+    outer_classifier_logloss.fit(X_classify, y_classify)
+    # Combine models
+    outer_classifier_gini.estimators_ = outer_classifier_gini.estimators_ + outer_classifier_entropy.estimators_ + outer_classifier_logloss.estimators_
+    outer_classifier_gini.n_estimators = len(outer_classifier_gini.estimators_)
+    export_classifier = outer_classifier_gini
     iteration_end = time.time()
     iteration_elapsed = int(iteration_end - iteration_start)
     iteration_success_time = datetime.datetime.now()

@@ -30,46 +30,35 @@ work_geodatabase = os.path.join(project_folder, 'EPA_Chenega_Workspace.gdb')
 # Define input datasets
 study_raster = os.path.join(project_folder, 'Data_Input/Chenega_ModelArea.tif')
 input_raster = os.path.join(project_folder, 'Data_Output/output_rasters',
-                            round_date, 'Chenega_Wetlands.tif')
+                            round_date, 'Chenega_Wetlands_Raw.tif')
 segments_feature = os.path.join(project_geodatabase, 'Chenega_Segments_Original_Polygon')
 
 # Define output raster
-output_raster = os.path.join(project_folder, 'Data_Output/data_package', version_number,
-                             'Chenega_Wetlands_Smoothed.tif')
+output_raster = os.path.join(project_folder, 'Data_Output/output_rasters',
+                             round_date, 'Chenega_Wetlands_Smoothed.tif')
 
 # Define surficial features dictionary
 class_values = {'E1AB1L': 1,
                 'E1UBL': 2,
                 'E2AB1': 3,
                 'E2EM1P': 4,
-                'E2RS1': 5,
-                'E2RS2': 6,
-                'E2US1N': 7,
-                'E2US2': 8,
-                'L1UB3H': 9,
-                'PAB3H': 10,
-                'PEM1D': 11,
-                'PEM1E': 12,
-                'PFO4B': 13,
-                'PRB1H': 14,
-                'PSS4B': 15,
-                'PUB3H': 16,
-                'PUB4H': 17,
-                'alpine dwarf shrub herbaceous': 18,
-                'alpine dwarf shrub lichen': 19,
-                'alpine herbaceous': 20,
-                'alpine sparse/barren': 21,
-                'anthropogenic': 22,
-                'barren disturbed': 23,
-                'coastal herbaceous': 24,
-                'mountain hemlock': 25,
-                'mountain hemlock - Sitka spruce': 26,
-                'Sitka alder - salmonberry': 27,
-                'Sitka spruce': 28,
-                'Sitka Willow - Barclay Willow Riparian Shrub': 29,
-                'subalpine herbaceous': 30,
-                'subalpine mountain hemlock woodland': 31,
-                'subalpine mountain hemlock - lichen woodland': 32}
+                'E2RS': 5,
+                'E2US': 6,
+                'PAB3H': 7,
+                'PEM1D': 8,
+                'PEM1E': 9,
+                'PFO4B': 10,
+                'PSS4B': 11,
+                'PUB': 12,
+                'alpine dwarf shrub': 13,
+                'alpine sparse/barren': 14,
+                'alpine-subalpine herbaceous': 15,
+                'barren disturbed': 16,
+                'coastal herbaceous': 17,
+                'mountain hemlock - Sitka spruce': 18,
+                'Sitka alder - salmonberry': 19,
+                'Sitka Willow - Barclay Willow Riparian Shrub': 20,
+                'subalpine mountain hemlock woodland': 21}
 
 # Create key word arguments
 kwargs_process = {'minimum_count': 505,

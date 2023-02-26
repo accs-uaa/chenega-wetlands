@@ -21,7 +21,7 @@ from package_Statistics import multiclass_predict
 round_date = 'round_20230223'
 
 # Define number of predicted classes
-class_number = 32
+class_number = 21
 
 #### SET UP DIRECTORIES, FILES, AND FIELDS
 
@@ -48,9 +48,9 @@ predictor_all = ['top_aspect', 'top_elevation', 'top_exposure', 'top_heat_load',
                  'hyd_coastal',
                  'maxr_01_blue', 'maxr_02_green', 'maxr_03_red', 'maxr_04_nearir', 'maxr_evi2', 'maxr_ndvi', 'maxr_ndwi',
                  'maxr_01_blue_std', 'maxr_02_green_std', 'maxr_03_red_std', 'maxr_04_nearir_std',
-                 'maxr_evi2_std', 'maxr_ndvi_std', 'maxr_ndwi_std', 'maxar_ndvi_std',
+                 'maxr_evi2_std', 'maxr_ndvi_std', 'maxr_ndwi_std',
                  'maxr_01_blue_rng', 'maxr_02_green_rng', 'maxr_03_red_rng', 'maxr_04_nearir_rng',
-                 'maxr_evi2_rng', 'maxr_ndvi_rng', 'maxr_ndwi_rng', 'maxar_ndvi_rng',
+                 'maxr_evi2_rng', 'maxr_ndvi_rng', 'maxr_ndwi_rng',
                  's1_vh_summ', 's1_vv_summ', 's1_vh_fall', 's1_vv_fall', 's1_vh_wint', 's1_vv_wint',
                  'shape_m', 'shape_m2',
                  's2_06_02_blue', 's2_06_03_green', 's2_06_04_red', 's2_06_05_rededge1', 's2_06_06_rededge2',
