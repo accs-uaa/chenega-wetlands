@@ -1,13 +1,13 @@
 # ---------------------------------------------------------------------------
 # Format confusion matrix
 # Author: Timm Nawrocki, Alaska Center for Conservation Science
-# Last Updated: 2023-02-24
+# Last Updated: 2023-06-11
 # Usage: Script should be executed in R 4.1.0+.
 # Description: "Format confusion matrix" calculates user's and producer's accuracy.
 # ---------------------------------------------------------------------------
 
 # Define version
-round_date = 'round_20230223'
+round_date = 'round_20230611'
 n_type = 21
 
 # Set root directory
@@ -43,16 +43,16 @@ raw_data = read.csv(raw_file)
 confusion_matrix = raw_data %>%
   rename(E1AB1L = X1, 
          E1UBL = X2, 
-         E2AB1 = X3, 
-         E2EM1P = X4, 
-         E2RS = X5, 
-         E2US = X6, 
+         E2AB1M = X3, 
+         E2AB1N = X4, 
+         E2RS1N = X5, 
+         E2US1N = X6, 
          PAB3H = X7, 
          PEM1D = X8, 
          PEM1E = X9, 
          PFO4B = X10, 
          PSS4B = X11, 
-         PUB = X12, 
+         PUB3H = X12, 
          alpine_dwarf = X13, 
          alpine_barren = X14, 
          alpine_herbaceous = X15, 
@@ -60,29 +60,29 @@ confusion_matrix = raw_data %>%
          coastal_herbaceous = X17, 
          hemlock_spruce = X18, 
          alder_salmonberry = X19, 
-         riparian_willow = X20, 
+         riparian_shrub = X20, 
          subalpine_hemlock = X21) %>%
   mutate(Actual = case_when(Actual == 1 ~ 'E1AB1L',
                             Actual == 2 ~ 'E1UBL',
-                            Actual == 3 ~ 'E2AB1',
-                            Actual == 4 ~ 'E2EM1P',
-                            Actual == 5 ~ 'E2RS',
-                            Actual == 6 ~ 'E2US',
+                            Actual == 3 ~ 'E2AB1M',
+                            Actual == 4 ~ 'E2AB1N',
+                            Actual == 5 ~ 'E2RS1N',
+                            Actual == 6 ~ 'E2US1N',
                             Actual == 7 ~ 'PAB3H',
                             Actual == 8 ~ 'PEM1D',
                             Actual == 9 ~ 'PEM1E',
                             Actual == 10 ~ 'PFO4B',
                             Actual == 11 ~ 'PSS4B',
-                            Actual == 12 ~ 'PUB',
-                            Actual == 13 ~ 'alpine dwarf shrub',
-                            Actual == 14 ~ 'alpine sparse/barren',
-                            Actual == 15 ~ 'alpine-subalpine herbaceous',
-                            Actual == 16 ~ 'barren disturbed',
-                            Actual == 17 ~ 'coastal herbaceous',
-                            Actual == 18 ~ 'mountain hemlock - Sitka spruce',
-                            Actual == 19 ~ 'Sitka alder - salmonberry',
-                            Actual == 20 ~ 'Sitka Willow - Barclay Willow Riparian Shrub',
-                            Actual == 21 ~ 'subalpine mountain hemlock woodland',
+                            Actual == 12 ~ 'PUB3H',
+                            Actual == 13 ~ 'alpine_dwarf',
+                            Actual == 14 ~ 'alpine_barren',
+                            Actual == 15 ~ 'alpine_herbaceous',
+                            Actual == 16 ~ 'barren_disturbed',
+                            Actual == 17 ~ 'coastal_herbaceous',
+                            Actual == 18 ~ 'hemlock_spruce',
+                            Actual == 19 ~ 'alder_salmonberry',
+                            Actual == 20 ~ 'riparian_shrub',
+                            Actual == 21 ~ 'subalpine_hemlock',
                             TRUE ~ Actual)) %>%
   mutate(acc_producer = 0)
 

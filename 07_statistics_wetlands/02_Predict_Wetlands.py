@@ -18,7 +18,7 @@ import datetime
 from package_Statistics import multiclass_predict
 
 # Define round
-round_date = 'round_20230223'
+round_date = 'round_20230611'
 
 # Define number of predicted classes
 class_number = 21

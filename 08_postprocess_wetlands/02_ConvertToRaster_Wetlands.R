@@ -2,13 +2,13 @@
 # ---------------------------------------------------------------------------
 # Convert wetlands predictions to rasters
 # Author: Timm Nawrocki, Alaska Center for Conservation Science
-# Last Updated: 2023-02-24
+# Last Updated: 2023-06-12
 # Usage: Script must be executed using R 4.2.1+.
 # Description: "Convert wetlands predictions to rasters" processes the predicted tables into predicted rasters by grid.
 # ---------------------------------------------------------------------------
 
 # Define round date and target
-round_date = 'round_20230223'
+round_date = 'round_20230611'
 
 # Set root directory
 drive = 'N:'

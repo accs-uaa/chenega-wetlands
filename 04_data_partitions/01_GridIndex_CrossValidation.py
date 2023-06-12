@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------------
 # Create cross-validation grid
 # Author: Timm Nawrocki
-# Last Updated: 2022-03-26
+# Last Updated: 2023-06-11
 # Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
 # Description: "Create cross-validation grid" creates a validation grid index from a manually-generated study area polygon.
 # ---------------------------------------------------------------------------
@@ -28,7 +28,7 @@ segments_geodatabase = os.path.join(project_folder, 'EPA_Chenega_Segments.gdb')
 
 # Define input datasets
 chenega_feature = os.path.join(work_geodatabase, 'Chenega_ModelArea')
-chenega_raster = os.path.join(project_folder, 'Data_Input/Chenega_ModelArea.tif')
+chenega_raster = os.path.join(project_folder, 'Data_Input/Chenega_ModelArea_1m_3338.tif')
 segments_point = os.path.join(work_geodatabase, 'Chenega_Segments_Original_Point')
 segments_polygon = os.path.join(work_geodatabase, 'Chenega_Segments_Original_Polygon')
 

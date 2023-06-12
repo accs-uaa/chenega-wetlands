@@ -2,13 +2,13 @@
 # ---------------------------------------------------------------------------
 # Merge wetlands rasters
 # Author: Timm Nawrocki, Alaska Center for Conservation Science
-# Last Updated: 2023-02-24
+# Last Updated: 2023-06-12
 # Usage: Code chunks must be executed sequentially in R Studio or R Studio Server installation.
 # Description: "Merge wetlands rasters" merges the predicted grid rasters into a single output raster.
 # ---------------------------------------------------------------------------
 
 # Define round date
-round_date = 'round_20230223'
+round_date = 'round_20230611'
 
 # Set root directory
 drive = 'N:'

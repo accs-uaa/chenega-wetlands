@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------------
 # Train and test wetlands classifier
 # Author: Timm Nawrocki
-# Last Updated: 2023-02-24
+# Last Updated: 2023-06-11
 # Usage: Must be executed in an Anaconda Python 3.9+ distribution.
 # Description: "Train and test wetlands classifier " trains a random forest model to predict wetlands from a set of training points. This script runs the model train and test steps to output a trained classifier file and predicted data set. The script must be run on a machine that can support 4 cores.
 # ---------------------------------------------------------------------------
@@ -18,7 +18,7 @@ import datetime
 from package_Statistics import multiclass_train_test
 
 # Define round
-round_date = 'round_20230223'
+round_date = 'round_20230611'
 
 #### SET UP DIRECTORIES, FILES, AND FIELDS
 
@@ -76,7 +76,7 @@ rstate = 21
 #### CONDUCT MODEL TRAIN AND TEST ITERATIONS
 
 # Create a standardized parameter set for a random forest classifier
-classifier_params = {'n_estimators': 300,
+classifier_params = {'n_estimators': 500,
                      'max_depth': None,
                      'min_samples_split': 2,
                      'min_samples_leaf': 1,
