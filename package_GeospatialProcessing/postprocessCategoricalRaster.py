@@ -14,7 +14,7 @@ def postprocess_categorical_raster(**kwargs):
     Inputs: 'minimum_count' -- the number of cells to be used as the minimum size for adjacent cells of a same value to be retained
             'attribute_dictionary' -- a dictionary of name and value pairs for the map schema
             'work_geodatabase' -- a geodatabase to store temporary results
-            'input_array' -- an array containing the area raster (must be first), the predicted raster, and the segments feature class
+            'input_array' -- an array containing the area raster (must be first) and the predicted raster
             'output_array' -- an array containing the output raster
     Returned Value: Returns a raster to disk
     Preconditions: requires a predicted categorical raster
@@ -42,7 +42,6 @@ def postprocess_categorical_raster(**kwargs):
     work_geodatabase = kwargs['work_geodatabase']
     area_raster = kwargs['input_array'][0]
     input_raster = kwargs['input_array'][1]
-    segments_feature = kwargs['input_array'][2]
     output_raster = kwargs['output_array'][0]
 
     # Define work folder
