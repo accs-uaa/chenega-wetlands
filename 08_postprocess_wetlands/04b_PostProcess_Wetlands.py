@@ -4,7 +4,7 @@
 # Author: Timm Nawrocki
 # Last Updated: 2023-08-02
 # Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
-# Description: "Post-process wetlands" processes the predicted raster into the final deliverable.
+# Description: "Post-process wetlands" processes the predicted raster into polygon versions for manual adjustment.
 # ---------------------------------------------------------------------------
 
 # Import packages
