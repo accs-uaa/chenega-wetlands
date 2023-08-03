@@ -11,7 +11,8 @@
 def postprocess_waterbodies(**kwargs):
     """
     Description: merges waterbodies and then splits by type
-    Inputs: 'attribute_dictionary' -- a dictionary of name and value pairs for the map schema
+    Inputs: 'mmu' -- an integer in sq m representing the area of the smallest retained feature
+            'attribute_dictionary' -- a dictionary of name and value pairs for the map schema
             'work_geodatabase' -- a geodatabase to store temporary results
             'input_array' -- an array containing the area raster (must be first), the predicted raster, a feature class of manual additions to waterbodies, and a feature class of manual deletions for waterbodies
             'output_array' -- an array containing the output feature class
@@ -32,6 +33,7 @@ def postprocess_waterbodies(**kwargs):
     import time
 
     # Parse key word argument inputs
+    mmu = kwargs['mmu']
     attribute_dictionary = kwargs['attribute_dictionary']
     work_geodatabase = kwargs['work_geodatabase']
     area_raster = kwargs['input_array'][0]
@@ -193,7 +195,7 @@ def postprocess_waterbodies(**kwargs):
     arcpy.conversion.RasterToPolygon(aquatic_types, parsed_feature, 'SIMPLIFY',
                                      'VALUE', 'SINGLE_OUTER_PART')
     # Attribute waterbodies based on size
-    code_block = '''def get_waterbody_type(gridcode, area):
+    type_block = '''def get_waterbody_type(gridcode, area):
     waterbody_type = 0
     if gridcode == 7:
         if area >= 80937.1:
@@ -207,20 +209,33 @@ def postprocess_waterbodies(**kwargs):
             waterbody_type = 12
     return waterbody_type
     '''
-    expression = 'get_waterbody_type(!gridcode!, float(!SHAPE.area!))'
+    type_expression = 'get_waterbody_type(!gridcode!, float(!SHAPE.area!))'
     arcpy.management.AddField(parsed_feature, 'VALUE', 'SHORT')
     arcpy.management.CalculateField(parsed_feature,
                                     'VALUE',
-                                    expression,
+                                    type_expression,
                                     'PYTHON3',
-                                    code_block)
-    # Enforce 0.5 acre MMU
+                                    type_block)
+    # Enforce the MMU
     waterbody_layer = 'waterbody_output'
     arcpy.management.MakeFeatureLayer(parsed_feature, waterbody_layer)
     arcpy.management.SelectLayerByAttribute(waterbody_layer, 'NEW_SELECTION',
-                                            'SHAPE_AREA < 2023.43', 'NON_INVERT')
+                                            f'SHAPE_AREA < {mmu}', 'NON_INVERT')
     arcpy.management.DeleteFeatures(waterbody_layer)
     arcpy.management.CopyFeatures(waterbody_layer, output_feature)
+    # Calculate attribute label field
+    label_block = '''def get_label(value, dictionary):
+                for label, id in dictionary.items():
+                    if value == id:
+                        return label'''
+    label_expression = f'get_label(!VALUE!, {attribute_dictionary})'
+    arcpy.management.AddField(output_feature, 'label', 'TEXT')
+    arcpy.management.CalculateField(output_feature,
+                                    'label',
+                                    label_expression,
+                                    'PYTHON3',
+                                    label_block)
+    arcpy.management.DeleteField(output_feature, ['Id', 'gridcode', 'VALUE'], 'DELETE_FIELDS')
     # End timing
     iteration_end = time.time()
     iteration_elapsed = int(iteration_end - iteration_start)
@@ -247,5 +262,5 @@ def postprocess_waterbodies(**kwargs):
         arcpy.management.Delete(parsed_feature)
 
     # Return success message
-    out_process = f'Successfully post-processed categorical raster.'
+    out_process = f'Successfully post-processed waterbodies.'
     return out_process

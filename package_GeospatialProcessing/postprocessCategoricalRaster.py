@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------------
 # Post-process categorical rasters
 # Author: Timm Nawrocki
-# Last Updated: 2023-02-24
+# Last Updated: 2023-08-02
 # Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
 # Description: "Post-process categorical rasters" is a function that generalizes a predicted raster, applies a minimum mapping unit, and adds manually delineated classes.
 # ---------------------------------------------------------------------------
@@ -11,7 +11,7 @@
 def postprocess_categorical_raster(**kwargs):
     """
     Description: generalizes categorical raster to minimum mapping unit and adds classes
-    Inputs: 'minimum_count' -- the number of cells to be used as the minimum size for adjacent cells of a same value to be retained
+    Inputs: 'mmu' -- an integer in sq m representing the area of the smallest retained feature
             'attribute_dictionary' -- a dictionary of name and value pairs for the map schema
             'work_geodatabase' -- a geodatabase to store temporary results
             'input_array' -- an array containing the area raster (must be first) and the predicted raster
@@ -23,21 +23,18 @@ def postprocess_categorical_raster(**kwargs):
     # Import packages
     import arcpy
     from arcpy.sa import BoundaryClean
-    from arcpy.sa import Con
     from arcpy.sa import ExtractByAttributes
-    from arcpy.sa import IsNull
     from arcpy.sa import MajorityFilter
     from arcpy.sa import Nibble
     from arcpy.sa import Raster
     from arcpy.sa import RegionGroup
     from arcpy.sa import SetNull
-    from arcpy.sa import ZonalStatistics
     import datetime
     import os
     import time
 
     # Parse key word argument inputs
-    minimum_count = kwargs['minimum_count']
+    mmu = kwargs['mmu']
     attribute_dictionary = kwargs['attribute_dictionary']
     work_geodatabase = kwargs['work_geodatabase']
     area_raster = kwargs['input_array'][0]
@@ -48,7 +45,7 @@ def postprocess_categorical_raster(**kwargs):
     work_folder = os.path.split(input_raster)[0]
 
     # Define intermediate datasets
-    input_integer = os.path.join(work_folder, 'integer.tif')
+    integer_raster = os.path.join(work_folder, 'integer.tif')
 
     # Set overwrite option
     arcpy.env.overwriteOutput = True
@@ -70,13 +67,22 @@ def postprocess_categorical_raster(**kwargs):
     cell_size = arcpy.management.GetRasterProperties(area_raster, 'CELLSIZEX', '').getOutput(0)
     arcpy.env.cellSize = int(cell_size)
 
+    # Retrieve waterbody values
+    value_pub3h = attribute_dictionary.get('PUB3H')
+    value_pab3h = attribute_dictionary.get('PAB3H')
+
     # Generalize raster results
     print(f'\tGeneralizing predicted raster...')
     iteration_start = time.time()
+    # Remove waterbodies
+    print('\t\tRemoving waterbodies...')
+    null_raster = SetNull((Raster(input_raster) == value_pub3h) | (Raster(input_raster) == value_pab3h),
+                          Raster(input_raster))
+    waterbody_nibble_raster = Nibble(null_raster, null_raster, 'DATA_ONLY', 'PROCESS_NODATA')
     # Copy raster to integer
     print('\t\tConverting input raster to integers...')
-    arcpy.management.CopyRaster(input_raster,
-                                input_integer,
+    arcpy.management.CopyRaster(waterbody_nibble_raster,
+                                integer_raster,
                                 '',
                                 '',
                                 '-128',
@@ -89,11 +95,11 @@ def postprocess_categorical_raster(**kwargs):
                                 'NONE',
                                 'CURRENT_SLICE',
                                 'NO_TRANSPOSE')
-    arcpy.management.CalculateStatistics(input_integer)
-    arcpy.management.BuildRasterAttributeTable(input_integer, 'Overwrite')
+    arcpy.management.CalculateStatistics(integer_raster)
+    arcpy.management.BuildRasterAttributeTable(integer_raster, 'Overwrite')
     # Clean raster boundaries
     print('\t\tCleaning raster boundaries...')
-    raster_boundary = BoundaryClean(input_integer,
+    raster_boundary = BoundaryClean(integer_raster,
                                     'DESCEND',
                                     'TWO_WAY')
     # Apply majority filter
@@ -133,7 +139,7 @@ def postprocess_categorical_raster(**kwargs):
     iteration_start = time.time()
     # Remove zones below minimum mapping unit
     print('\t\tRemoving contiguous areas below minimum mapping unit...')
-    criteria = f'COUNT > {minimum_count}'
+    criteria = f'COUNT > {mmu}'
     raster_mask = ExtractByAttributes(raster_regions, criteria)
     # End timing
     iteration_end = time.time()
@@ -202,8 +208,8 @@ def postprocess_categorical_raster(**kwargs):
     print('\t----------')
 
     # Delete intermediate datasets
-    if arcpy.Exists(input_integer) == 1:
-        arcpy.management.Delete(input_integer)
+    if arcpy.Exists(integer_raster) == 1:
+        arcpy.management.Delete(integer_raster)
 
     # Return success message
     out_process = f'Successfully post-processed categorical raster.'
