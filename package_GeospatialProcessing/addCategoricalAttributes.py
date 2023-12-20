@@ -20,23 +20,21 @@ def add_categorical_attributes(**kwargs):
     """
 
     # Import packages
+    from akutils import get_attribute_code_block
     import arcpy
-    from arcpy.sa import BoundaryClean
-    from arcpy.sa import ExtractByAttributes
-    from arcpy.sa import MajorityFilter
-    from arcpy.sa import Nibble
     from arcpy.sa import Raster
-    from arcpy.sa import RegionGroup
     import datetime
-    import os
     import time
 
     # Parse key word argument inputs
     attribute_dictionary = kwargs['attribute_dictionary']
     work_geodatabase = kwargs['work_geodatabase']
-    area_raster = kwargs['input_array'][0]
-    input_raster = kwargs['input_array'][1]
-    output_raster = kwargs['output_array'][0]
+    area_input = kwargs['input_array'][0]
+    wetlands_input = kwargs['input_array'][1]
+    wetlands_output = kwargs['output_array'][0]
+
+    # Define code block
+    code_block = get_attribute_code_block()
 
     # Set overwrite option
     arcpy.env.overwriteOutput = True
@@ -48,23 +46,22 @@ def add_categorical_attributes(**kwargs):
     arcpy.env.workspace = work_geodatabase
 
     # Set snap raster and extent
-    arcpy.env.snapRaster = area_raster
-    arcpy.env.extent = Raster(area_raster).extent
+    arcpy.env.snapRaster = area_input
+    arcpy.env.extent = Raster(area_input).extent
 
     # Set output coordinate system
-    arcpy.env.outputCoordinateSystem = Raster(area_raster)
+    arcpy.env.outputCoordinateSystem = Raster(area_input)
 
     # Set cell size environment
-    cell_size = arcpy.management.GetRasterProperties(area_raster, 'CELLSIZEX', '').getOutput(0)
+    cell_size = arcpy.management.GetRasterProperties(area_input, 'CELLSIZEX', '').getOutput(0)
     arcpy.env.cellSize = int(cell_size)
 
     # Generalize raster results
-    print(f'\tGeneralizing predicted raster...')
     iteration_start = time.time()
     # Copy raster to integer
-    print('\t\tConverting input raster to integers...')
-    arcpy.management.CopyRaster(input_raster,
-                                output_raster,
+    print('\tConverting input raster to integers...')
+    arcpy.management.CopyRaster(wetlands_input,
+                                wetlands_output,
                                 '',
                                 '',
                                 '-128',
@@ -77,15 +74,16 @@ def add_categorical_attributes(**kwargs):
                                 'NONE',
                                 'CURRENT_SLICE',
                                 'NO_TRANSPOSE')
-    arcpy.management.CalculateStatistics(output_raster)
-    arcpy.management.BuildRasterAttributeTable(output_raster, 'Overwrite')
+    print('\tCalculating statistics...')
+    arcpy.management.CalculateStatistics(wetlands_output)
+    print('\tBuilding pyramids...')
+    arcpy.management.BuildPyramids(wetlands_output, -1, 'NONE', 'NEAREST',
+                                   'LZ77', '', 'OVERWRITE')
+    print('\tAdding raster attributes...')
+    arcpy.management.BuildRasterAttributeTable(wetlands_output, 'Overwrite')
     # Calculate attribute label field
-    code_block = '''def get_label(value, dictionary):
-        for label, id in dictionary.items():
-            if value == id:
-                return label'''
-    expression = f'get_label(!VALUE!, {attribute_dictionary})'
-    arcpy.management.CalculateField(output_raster,
+    expression = f'get_response(!VALUE!, {attribute_dictionary}, "value")'
+    arcpy.management.CalculateField(wetlands_output,
                                     'label',
                                     expression,
                                     'PYTHON3',
@@ -96,8 +94,8 @@ def add_categorical_attributes(**kwargs):
     iteration_success_time = datetime.datetime.now()
     # Report success
     print(
-        f'\tCompleted at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
-    print('\t----------')
+        f'Completed at {iteration_success_time.strftime("%Y-%m-%d %H:%M")} (Elapsed time: {datetime.timedelta(seconds=iteration_elapsed)})')
+    print('----------')
 
     # Return success message
     out_process = f'Successfully post-processed categorical raster.'

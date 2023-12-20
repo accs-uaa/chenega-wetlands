@@ -14,14 +14,13 @@ from package_GeospatialProcessing import arcpy_geoprocessing
 from package_GeospatialProcessing import postprocess_categorical_raster
 from package_GeospatialProcessing import postprocess_marine_types
 from package_GeospatialProcessing import postprocess_terrestrial_types
-from package_GeospatialProcessing import postprocess_waterbodies
 
 # Set round date
-round_date = 'round_20230611'
-version_number = 'v0_3'
+round_date = 'round_20231217'
+version_number = 'v1_0'
 
 # Set root directory
-drive = 'N:/'
+drive = 'D:/'
 root_folder = 'ACCS_Work'
 
 # Define folder structure
@@ -36,10 +35,10 @@ mmu_terrestrial = 506
 mmu_marine = 2023
 
 # Define input datasets
-study_raster = os.path.join(project_folder, 'Data_Input/Chenega_ModelArea_1m_3338.tif')
-study_feature = os.path.join(project_geodatabase, 'Chenega_ModelArea')
-input_raster = os.path.join(project_folder, 'Data_Output/output_rasters',
-                            round_date, 'Chenega_Wetlands_Raw.tif')
+area_input = os.path.join(project_folder, 'Data_Input/Chenega_ModelArea_1m_3338.tif')
+boundary_input = os.path.join(project_geodatabase, 'Chenega_ModelArea')
+wetlands_input = os.path.join(project_folder, 'Data_Output/output_rasters',
+                              round_date, 'Chenega_Wetlands_Raw.tif')
 waterbody_additions = os.path.join(project_geodatabase, 'Chenega_Waterbody_Manual_Addition')
 waterbody_deletions = os.path.join(project_geodatabase, 'Chenega_Waterbody_Manual_Remove')
 coastline_feature = os.path.join(project_geodatabase, 'Chenega_Coast_LAF_Smooth')
@@ -55,37 +54,48 @@ marine_feature = os.path.join(project_geodatabase, 'Chenega_Marine_Processed')
 terrestrial_feature = os.path.join(project_geodatabase, 'Chenega_Terrestrial_Processed')
 
 # Define surficial features dictionary
-class_values = {'E1AB1L': 1,
-                'E1UBL': 2,
-                'E2AB1M': 3,
-                'E2AB1N': 4,
-                'E2RS1N': 5,
-                'E2US1N': 6,
-                'PAB3H': 7,
-                'PEM1D': 8,
-                'PEM1E': 9,
-                'PFO4B': 10,
-                'PSS4B': 11,
-                'PUB3H': 12,
-                'alpine dwarf shrub': 13,
-                'alpine sparse/barren': 14,
-                'alpine-subalpine herbaceous': 15,
-                'barren disturbed': 16,
-                'coastal herbaceous': 17,
-                'mountain hemlock - Sitka spruce': 18,
-                'Sitka alder-salmonberry': 19,
-                'riparian shrub': 20,
-                'subalpine mountain hemlock woodland': 21,
-                'LAB3H': 22,
-                'LUB3H': 23}
+wetlands_dictionary = {1: 'M1AB1L',
+                       2: 'M1UBL',
+                       3: 'M2AB1M',
+                       4: 'M2AB1N',
+                       5: 'M2RS1N',
+                       6: 'M2RS1N',
+                       7: 'PAB3H',
+                       8: 'PEM1D',
+                       9: 'PEM1E',
+                       10: 'PFO4B',
+                       11: 'PSS4B',
+                       12: 'PUB3H',
+                       13: 'alpine dwarf shrub',
+                       14: 'alpine sparse/barren',
+                       15: 'alpine-subalpine herbaceous',
+                       16: 'barren disturbed',
+                       17: 'coastal herbaceous',
+                       18: 'mountain hemlock - Sitka spruce',
+                       19: 'Sitka alder-salmonberry',
+                       20: 'riparian shrub',
+                       21: 'subalpine mountain hemlock woodland',
+                       22: 'LAB3H',
+                       23: 'LUB3H',
+                       24: 'PRB1H',
+                       25: 'E2EM1P',
+                       26: 'PEM1C',
+                       27: 'PSS1C',
+                       28: 'R1UB1V',
+                       29: 'R2UB1H',
+                       30: 'R3UB1H',
+                       31: 'R4SB3J'}
 
 #### POST-PROCESS WATERBODIES
 
 # Create key word arguments
 kwargs_waterbodies = {'mmu': mmu_terrestrial,
-                      'attribute_dictionary': class_values,
+                      'attribute_dictionary': wetlands_dictionary,
                       'work_geodatabase': work_geodatabase,
-                      'input_array': [study_raster, input_raster, waterbody_additions, waterbody_deletions],
+                      'input_array': [area_input,
+                                      wetlands_input,
+                                      waterbody_additions,
+                                      waterbody_deletions],
                       'output_array': [waterbody_feature]
                       }
 
@@ -102,9 +112,9 @@ else:
 
 # Create key word arguments
 kwargs_process = {'mmu': mmu_terrestrial,
-                  'attribute_dictionary': class_values,
+                  'attribute_dictionary': wetlands_dictionary,
                   'work_geodatabase': work_geodatabase,
-                  'input_array': [study_raster, input_raster],
+                  'input_array': [area_input, wetlands_input],
                   'output_array': [wetlands_506m]
                   }
 
@@ -121,9 +131,9 @@ else:
 
 # Create key word arguments
 kwargs_process = {'mmu': mmu_marine,
-                  'attribute_dictionary': class_values,
+                  'attribute_dictionary': wetlands_dictionary,
                   'work_geodatabase': work_geodatabase,
-                  'input_array': [study_raster, input_raster],
+                  'input_array': [area_input, wetlands_input],
                   'output_array': [wetlands_2023m]
                   }
 

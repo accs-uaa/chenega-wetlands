@@ -20,13 +20,11 @@ def postprocess_terrestrial_types(**kwargs):
     """
 
     # Import packages
+    from akutils import get_attribute_code_block
     import arcpy
-    from arcpy.sa import BoundaryClean
     from arcpy.sa import ExtractByMask
-    from arcpy.sa import MajorityFilter
     from arcpy.sa import Nibble
     from arcpy.sa import Raster
-    from arcpy.sa import RegionGroup
     from arcpy.sa import SetNull
     import datetime
     import os
@@ -51,6 +49,9 @@ def postprocess_terrestrial_types(**kwargs):
     merged_feature = os.path.join(work_geodatabase, 'merged_terrestrial_coastal_types')
     merged_raster = os.path.join(work_folder, 'merged_terrestrial_coastal_types.tif')
     processed_feature = os.path.join(work_geodatabase, 'processed_feature')
+
+    # Define code block
+    label_block = get_attribute_code_block()
 
     # Set overwrite option
     arcpy.env.overwriteOutput = True
@@ -147,11 +148,7 @@ def postprocess_terrestrial_types(**kwargs):
     arcpy.conversion.RasterToPolygon(merged_raster, processed_feature, 'SIMPLIFY',
                                      'VALUE', 'SINGLE_OUTER_PART')
     # Calculate attribute label field
-    label_block = '''def get_label(value, dictionary):
-            for label, id in dictionary.items():
-                if value == id:
-                    return label'''
-    label_expression = f'get_label(!gridcode!, {attribute_dictionary})'
+    label_expression = f'get_response(!gridcode!, {attribute_dictionary}, "value")'
     arcpy.management.AddField(processed_feature, 'label', 'TEXT')
     arcpy.management.CalculateField(processed_feature,
                                     'label',
