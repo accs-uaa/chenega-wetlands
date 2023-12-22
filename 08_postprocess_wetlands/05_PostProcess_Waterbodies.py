@@ -2,9 +2,9 @@
 # ---------------------------------------------------------------------------
 # Post-process wetlands
 # Author: Timm Nawrocki
-# Last Updated: 2023-08-02
+# Last Updated: 2023-12-19
 # Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
-# Description: "Post-process wetlands" processes the predicted raster into polygon versions for manual adjustment.
+# Description: "Post-process wetlands" processes the predicted raster and manually delineated types into polygon waterbodies.
 # ---------------------------------------------------------------------------
 
 # Import packages
@@ -37,7 +37,6 @@ workspace_geodatabase = os.path.join(project_folder, 'EPA_Chenega_Workspace.gdb'
 
 # Define minimum mapping units
 mmu_terrestrial = 506
-mmu_marine = 2023
 
 # Define input datasets
 area_input = os.path.join(project_folder, 'Data_Input/Chenega_ModelArea_1m_3338.tif')
@@ -67,7 +66,7 @@ wetlands_dictionary = {1: 'M1AB1L',
                        3: 'M2AB1M',
                        4: 'M2AB1N',
                        5: 'M2RS1N',
-                       6: 'M2RS1N',
+                       6: 'M2US1N',
                        7: 'PAB3H',
                        8: 'PEM1D',
                        9: 'PEM1E',
@@ -92,7 +91,8 @@ wetlands_dictionary = {1: 'M1AB1L',
                        28: 'R1UB1V',
                        29: 'R2UB1H',
                        30: 'R3UB1H',
-                       31: 'R4SB3J'}
+                       31: 'R4SB3J',
+                       32: 'lakeshore'}
 
 # Set overwrite option
 arcpy.env.overwriteOutput = True
@@ -242,13 +242,8 @@ arcpy.analysis.SpatialJoin(modified_feature,
                            '',
                            '',
                            '')
-# Smooth Polygon
-arcpy.cartography.SmoothSharedEdges(joined_feature,
-                                    'PAEK',
-                                    '10 Meters',
-                                    '',
-                                    '')
 # Enforce the MMU
+print('\tEnforcing MMU...')
 waterbody_layer = 'waterbody_output'
 arcpy.management.MakeFeatureLayer(joined_feature, waterbody_layer)
 arcpy.management.SelectLayerByAttribute(waterbody_layer,
@@ -258,6 +253,7 @@ arcpy.management.SelectLayerByAttribute(waterbody_layer,
 arcpy.management.DeleteFeatures(waterbody_layer)
 arcpy.management.Merge([waterbody_layer, prbh_input], waterbody_output)
 # Attribute waterbodies based on size
+print('\tBuilding attribute table...')
 type_block = f'''def get_waterbody_type(gridcode, attribute, area):
     waterbody_type = 0
     if attribute == 'PRB1H':
@@ -299,15 +295,9 @@ arcpy.management.CalculateField(waterbody_output,
                                 'PYTHON3',
                                 label_block)
 arcpy.management.DeleteField(waterbody_output,
-                             ['Join_Count',
-                              'TARGET_FID',
-                              'Id',
-                              'gridcode',
-                              'ORIG_FID',
-                              'ACRES',
-                              'Shape_Leng',
-                              'ATTRIBUTE'],
-                             'DELETE_FIELDS')
+                             ['VALUE',
+                              'label'],
+                             'KEEP_FIELDS')
 end_timing(iteration_start)
 
 # Delete intermediate datasets
