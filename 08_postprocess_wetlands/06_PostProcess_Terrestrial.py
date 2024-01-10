@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------------
 # Post-process terrestrial
 # Author: Timm Nawrocki
-# Last Updated: 2023-12-20
+# Last Updated: 2024-01-09
 # Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
 # Description: "Post-process terrestrial" processes the predicted raster and manually delineated types into polygon terrestrial types.
 # ---------------------------------------------------------------------------
@@ -26,38 +26,47 @@ import time
 # Set round date
 round_date = 'round_20231217'
 
+# Define minimum mapping units in meters squared
+mmu_terrestrial = 506
+
 # Set root directory
 drive = 'D:/'
 root_folder = 'ACCS_Work'
 
 # Define folder structure
 project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
-manual_folder = os.path.join(project_folder, 'Data_Input/manual_types')
+manual_folder = os.path.join(project_folder, 'Data_Input/manual_types_projected')
 output_folder = os.path.join(project_folder, 'Data_Output/output_rasters', round_date)
 
 # Define geodatabases
 project_geodatabase = os.path.join(project_folder, 'EPA_Chenega.gdb')
 workspace_geodatabase = os.path.join(project_folder, 'EPA_Chenega_Workspace.gdb')
 
-# Define minimum mapping units in meters squared
-mmu_terrestrial = 506
-mmu_marine = 2023
-
 # Define input datasets
 area_input = os.path.join(project_folder, 'Data_Input/Chenega_ModelArea_1m_3338.tif')
 wetlands_input = os.path.join(output_folder, 'Chenega_Wetlands_Raw.tif')
 coastline_input = os.path.join(project_geodatabase, 'Chenega_Coast_LAF_Smooth')
 training_input = os.path.join(project_geodatabase, 'Chenega_Training_Polys_20230606')
-e2em1p_input = os.path.join(manual_folder, 'Chenega_E2EM1P_Digitized.shp')
-pem1c_input = os.path.join(manual_folder, 'Chenega_PEM1C_Digitized.shp')
-pss1c_input = os.path.join(manual_folder, 'Chenega_PSS1C_Digitized.shp')
-r1ub1v_input = os.path.join(manual_folder, 'Chenega_R1UB1V_Digitized.shp')
-r2ub1h_input = os.path.join(manual_folder, 'Chenega_R2UB1H_Digitized.shp')
-r3ub1h_input = os.path.join(manual_folder, 'Chenega_R3UB1H_Digitized.shp')
-r4sb3j_input = os.path.join(manual_folder, 'Chenega_R4SB3J_Digitized.shp')
+e2em1p_input = os.path.join(manual_folder, 'Chenega_E2EM1P_Digitized_3338.shp')
+pem1c_input = os.path.join(manual_folder, 'Chenega_PEM1C_Digitized_3338.shp')
+pss1c_input = os.path.join(manual_folder, 'Chenega_PSS1C_Digitized_3338.shp')
+r1ub1v_input = os.path.join(manual_folder, 'Chenega_R1UB1V_Digitized_3338.shp')
+r2ub1h_input = os.path.join(manual_folder, 'Chenega_R2UB1H_Digitized_3338.shp')
+r3ub1h_input = os.path.join(manual_folder, 'Chenega_R3UB1H_Digitized_3338.shp')
+r4sb3j_input = os.path.join(manual_folder, 'Chenega_R4SB3J_Digitized_3338.shp')
+prb1h_input = os.path.join(manual_folder, 'Chenega_PRB1H_Digitized_3338.shp')
 waterbody_input = os.path.join(project_geodatabase, 'Chenega_Waterbody_Processed')
 
 # Define intermediate datasets
+e2em1p_noZ = os.path.join(workspace_geodatabase, 'Chenega_E2EM1P_Digitized_3338')
+pem1c_noZ = os.path.join(workspace_geodatabase, 'Chenega_PEM1C_Digitized_3338')
+pss1c_noZ = os.path.join(workspace_geodatabase, 'Chenega_PSS1C_Digitized_3338')
+r1ub1v_noZ = os.path.join(workspace_geodatabase, 'Chenega_R1UB1V_Digitized_3338')
+r2ub1h_noZ = os.path.join(workspace_geodatabase, 'Chenega_R2UB1H_Digitized_3338')
+r3ub1h_noZ = os.path.join(workspace_geodatabase, 'Chenega_R3UB1H_Digitized_3338')
+r4sb3j_noZ = os.path.join(workspace_geodatabase, 'Chenega_R4SB3J_Digitized_3338')
+prb1h_noZ = os.path.join(workspace_geodatabase, 'Chenega_PRB1H_Digitized_3338')
+manual_overlap = os.path.join(workspace_geodatabase, 'manual_types_overlap_remove')
 manual_dissolve = os.path.join(workspace_geodatabase, 'manual_types_dissolve')
 manual_raster = os.path.join(manual_folder, 'manual_raster.tif')
 waterbody_dissolve = os.path.join(workspace_geodatabase, 'waterbody_dissolve')
@@ -67,19 +76,11 @@ training_raster = os.path.join(output_folder, 'training_raster.tif')
 integer_raster = os.path.join(output_folder, 'integer_raster.tif')
 terrestrial_raster = os.path.join(output_folder, 'terrestrial_raster.tif')
 terrestrial_preliminary = os.path.join(workspace_geodatabase, 'terrestrial_preliminary')
-manual_erase = os.path.join(workspace_geodatabase, 'manual_erase')
-terrestrial_merge = os.path.join(workspace_geodatabase, 'terrestrial_merge')
-terrestrial_dissolve = os.path.join(workspace_geodatabase, 'terrestrial_dissolve')
-r1ub1v_feature = os.path.join(workspace_geodatabase, 'Chenega_R1UB1V_Digitized')
-r2ub1h_feature = os.path.join(workspace_geodatabase, 'Chenega_R2UB1H_Digitized')
-r3ub1h_feature = os.path.join(workspace_geodatabase, 'Chenega_R3UB1H_Digitized')
-r4sb3j_feature = os.path.join(workspace_geodatabase, 'Chenega_R4SB3J_Digitized')
 
 # Define output datasets
 manual_output = os.path.join(project_geodatabase, 'Chenega_Manual_Types')
 training_output = os.path.join(project_geodatabase, 'Chenega_Training_Integration')
 terrestrial_output = os.path.join(project_geodatabase, 'Chenega_Terrestrial_Processed')
-riparian_output = os.path.join(project_geodatabase, 'Chenega_Riparian_Types')
 
 # Define surficial features dictionary
 wetlands_dictionary = {1: 'M1AB1L',
@@ -118,6 +119,9 @@ wetlands_dictionary = {1: 'M1AB1L',
 # Set overwrite option
 arcpy.env.overwriteOutput = True
 
+# Set the outputZFlag environment to Disabled
+arcpy.env.outputZFlag = 'Disabled'
+
 # Specify core usage
 arcpy.env.parallelProcessingFactor = '0'
 
@@ -139,15 +143,28 @@ arcpy.env.cellSize = int(cell_size)
 print('Preparing manual types for integration...')
 iteration_start = time.time()
 # Merge manual types
-print('\tMerging manual types...')
-arcpy.management.Merge([e2em1p_input,
-                        pem1c_input,
-                        pss1c_input,
-                        r1ub1v_input,
-                        r2ub1h_input,
-                        r3ub1h_input,
-                        r4sb3j_input],
-                       manual_output)
+print('\tMerge manual types without overlap...')
+arcpy.management.CopyFeatures(e2em1p_input, e2em1p_noZ)
+arcpy.management.CopyFeatures(pem1c_input, pem1c_noZ)
+arcpy.management.CopyFeatures(pss1c_input, pss1c_noZ)
+arcpy.management.CopyFeatures(r1ub1v_input, r1ub1v_noZ)
+arcpy.management.CopyFeatures(r2ub1h_input, r2ub1h_noZ)
+arcpy.management.CopyFeatures(r3ub1h_input, r3ub1h_noZ)
+arcpy.management.CopyFeatures(r4sb3j_input, r4sb3j_noZ)
+arcpy.management.CopyFeatures(prb1h_input, prb1h_noZ)
+arcpy.analysis.RemoveOverlapMultiple([e2em1p_noZ,
+                                      pem1c_noZ,
+                                      pss1c_noZ,
+                                      r1ub1v_noZ,
+                                      r2ub1h_noZ,
+                                      r3ub1h_noZ,
+                                      r4sb3j_noZ],
+                                     manual_overlap,
+                                     'THIESSEN',
+                                     'ALL')
+arcpy.analysis.PairwiseErase(manual_overlap,
+                             prb1h_noZ,
+                             manual_output)
 # Calculate attribute value field
 print('\tBuilding attribute table...')
 arcpy.management.AddField(manual_output,
@@ -417,7 +434,7 @@ iteration_start = time.time()
 print('\tConvert raster to polygon...')
 arcpy.conversion.RasterToPolygon(terrestrial_raster,
                                  terrestrial_preliminary,
-                                 'SIMPLIFY',
+                                 'NO_SIMPLIFY',
                                  'VALUE',
                                  'SINGLE_OUTER_PART')
 # Calculate attribute label field
@@ -449,59 +466,16 @@ arcpy.management.DeleteField(terrestrial_preliminary,
                              ['VALUE',
                               'label'],
                              'KEEP_FIELDS')
-# Erase overlapping riparian types
-print('\tErasing overlap in riparian types...')
-manual_layer = 'manual_layer'
-arcpy.management.MakeFeatureLayer(manual_output, manual_layer)
-r1ub1v_selection = 'VALUE <> 28'
-arcpy.management.SelectLayerByAttribute(manual_layer,
-                                        'NEW_SELECTION',
-                                        r1ub1v_selection,
-                                        'NON_INVERT')
-arcpy.analysis.PairwiseErase(manual_output, manual_layer, r1ub1v_feature)
-r2ub1h_selection = 'VALUE <> 29'
-arcpy.management.SelectLayerByAttribute(manual_layer,
-                                        'NEW_SELECTION',
-                                        r2ub1h_selection,
-                                        'NON_INVERT')
-arcpy.analysis.PairwiseErase(manual_output, manual_layer, r2ub1h_feature)
-r3ub1h_selection = 'VALUE <> 30'
-arcpy.management.SelectLayerByAttribute(manual_layer,
-                                        'NEW_SELECTION',
-                                        r3ub1h_selection,
-                                        'NON_INVERT')
-arcpy.analysis.PairwiseErase(manual_output, manual_layer, r3ub1h_feature)
-r4sb3j_selection = 'VALUE <> 31'
-arcpy.management.SelectLayerByAttribute(manual_layer,
-                                        'NEW_SELECTION',
-                                        r4sb3j_selection,
-                                        'NON_INVERT')
-arcpy.analysis.PairwiseErase(manual_output, manual_layer, r4sb3j_feature)
-arcpy.management.Merge([r1ub1v_feature,
-                        r2ub1h_feature,
-                        r3ub1h_feature,
-                        r4sb3j_feature],
-                       riparian_output)
-# Integrate manual riparian types
-print('\tIntegrating manual riparian types...')
-arcpy.analysis.PairwiseErase(terrestrial_preliminary, riparian_output, manual_erase)
-arcpy.management.Merge([manual_erase,
-                        riparian_output],
-                       terrestrial_merge)
-arcpy.analysis.PairwiseDissolve(terrestrial_merge,
-                                terrestrial_dissolve,
-                                'VALUE',
-                                '',
-                                'SINGLE_PART',
-                                '')
 # Clip polygon to coastline
 print('\tClip polygons to coastline...')
-arcpy.analysis.PairwiseClip(terrestrial_dissolve,
+arcpy.analysis.PairwiseClip(terrestrial_preliminary,
                             coastline_input,
                             terrestrial_output)
 end_timing(iteration_start)
 
 # Delete intermediate datasets
+if arcpy.Exists(manual_overlap) == 1:
+    arcpy.management.Delete(manual_overlap)
 if arcpy.Exists(manual_dissolve) == 1:
     arcpy.management.Delete(manual_dissolve)
 if arcpy.Exists(manual_raster) == 1:
@@ -520,17 +494,3 @@ if arcpy.Exists(terrestrial_raster) == 1:
     arcpy.management.Delete(terrestrial_raster)
 if arcpy.Exists(terrestrial_preliminary) == 1:
     arcpy.management.Delete(terrestrial_preliminary)
-if arcpy.Exists(manual_erase) == 1:
-    arcpy.management.Delete(manual_erase)
-if arcpy.Exists(terrestrial_merge) == 1:
-    arcpy.management.Delete(terrestrial_merge)
-if arcpy.Exists(terrestrial_dissolve) == 1:
-    arcpy.management.Delete(terrestrial_dissolve)
-if arcpy.Exists(r1ub1v_feature) == 1:
-    arcpy.management.Delete(r1ub1v_feature)
-if arcpy.Exists(r2ub1h_feature) == 1:
-    arcpy.management.Delete(r2ub1h_feature)
-if arcpy.Exists(r3ub1h_feature) == 1:
-    arcpy.management.Delete(r3ub1h_feature)
-if arcpy.Exists(r4sb3j_feature) == 1:
-    arcpy.management.Delete(r4sb3j_feature)

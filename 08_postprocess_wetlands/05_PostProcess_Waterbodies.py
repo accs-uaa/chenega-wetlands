@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------------
 # Post-process wetlands
 # Author: Timm Nawrocki
-# Last Updated: 2023-12-19
+# Last Updated: 2024-01-09
 # Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
 # Description: "Post-process wetlands" processes the predicted raster and manually delineated types into polygon waterbodies.
 # ---------------------------------------------------------------------------
@@ -22,28 +22,28 @@ import time
 # Set round date
 round_date = 'round_20231217'
 
+# Define minimum mapping units
+mmu_terrestrial = 506
+
 # Set root directory
 drive = 'D:/'
 root_folder = 'ACCS_Work'
 
 # Define folder structure
 project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
-manual_folder = os.path.join(project_folder, 'Data_Input/manual_types')
+manual_folder = os.path.join(project_folder, 'Data_Input/manual_types_projected')
 output_folder = os.path.join(project_folder, 'Data_Output/output_rasters', round_date)
 
 # Define geodatabases
 project_geodatabase = os.path.join(project_folder, 'EPA_Chenega.gdb')
 workspace_geodatabase = os.path.join(project_folder, 'EPA_Chenega_Workspace.gdb')
 
-# Define minimum mapping units
-mmu_terrestrial = 506
-
 # Define input datasets
 area_input = os.path.join(project_folder, 'Data_Input/Chenega_ModelArea_1m_3338.tif')
 wetlands_input = os.path.join(output_folder, 'Chenega_Wetlands_Raw.tif')
 additions_input = os.path.join(project_geodatabase, 'Chenega_Waterbody_Manual_Addition')
 deletions_input = os.path.join(project_geodatabase, 'Chenega_Waterbody_Manual_Remove')
-prbh_input = os.path.join(manual_folder, 'Chenega_PRBH_Digitized.shp')
+prb1h_input = os.path.join(manual_folder, 'Chenega_PRB1H_Digitized_3338.shp')
 
 # Define intermediate datasets
 integer_raster = os.path.join(output_folder, 'integer_raster.tif')
@@ -56,6 +56,7 @@ zonal_raster = os.path.join(output_folder, 'aquaticbed_proportion.tif')
 parsed_feature = os.path.join(workspace_geodatabase, 'waterbody_parsed')
 point_feature = os.path.join(workspace_geodatabase, 'point_feature')
 joined_feature = os.path.join(workspace_geodatabase, 'joined_feature')
+prb1h_erase = os.path.join(workspace_geodatabase, 'prb1h_erase')
 
 # Define output datasets
 waterbody_output = os.path.join(project_geodatabase, 'Chenega_Waterbody_Processed')
@@ -224,7 +225,7 @@ aquatic_types = Con(Raster(zonal_raster) >= 30, value_pab3h, value_pub3h)
 print('\tConverting parsed waterbodies to feature class...')
 arcpy.conversion.RasterToPolygon(aquatic_types,
                                  parsed_feature,
-                                 'SIMPLIFY',
+                                 'NO_SIMPLIFY',
                                  'VALUE',
                                  'SINGLE_OUTER_PART')
 # Convert aquatic types to points
@@ -251,7 +252,9 @@ arcpy.management.SelectLayerByAttribute(waterbody_layer,
                                         f'SHAPE_AREA < {mmu_terrestrial}',
                                         'NON_INVERT')
 arcpy.management.DeleteFeatures(waterbody_layer)
-arcpy.management.Merge([waterbody_layer, prbh_input], waterbody_output)
+# Merge modeled waterbodies with PRB1H
+arcpy.analysis.PairwiseErase(waterbody_layer, prb1h_input, prb1h_erase)
+arcpy.management.Merge([prb1h_erase, prb1h_input], waterbody_output)
 # Attribute waterbodies based on size
 print('\tBuilding attribute table...')
 type_block = f'''def get_waterbody_type(gridcode, attribute, area):
@@ -319,3 +322,5 @@ if arcpy.Exists(point_feature) == 1:
     arcpy.management.Delete(point_feature)
 if arcpy.Exists(joined_feature) == 1:
     arcpy.management.Delete(joined_feature)
+if arcpy.Exists(prb1h_erase) == 1:
+    arcpy.management.Delete(prb1h_erase)

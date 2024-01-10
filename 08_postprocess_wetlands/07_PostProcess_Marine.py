@@ -2,7 +2,7 @@
 # ---------------------------------------------------------------------------
 # Post-process terrestrial
 # Author: Timm Nawrocki
-# Last Updated: 2023-12-20
+# Last Updated: 2024-01-09
 # Usage: Must be executed in an ArcGIS Pro Python 3.7 installation.
 # Description: "Post-process marine" processes the predicted raster and manually delineated types into polygon marine types.
 # ---------------------------------------------------------------------------
@@ -26,22 +26,22 @@ import time
 # Set round date
 round_date = 'round_20231217'
 
+# Define minimum mapping units in meters squared
+mmu_terrestrial = 506
+mmu_marine = 2023
+
 # Set root directory
 drive = 'D:/'
 root_folder = 'ACCS_Work'
 
 # Define folder structure
 project_folder = os.path.join(drive, root_folder, 'Projects/VegetationEcology/EPA_Chenega/Data')
-manual_folder = os.path.join(project_folder, 'Data_Input/manual_types')
+manual_folder = os.path.join(project_folder, 'Data_Input/manual_types_projected')
 output_folder = os.path.join(project_folder, 'Data_Output/output_rasters', round_date)
 
 # Define geodatabases
 project_geodatabase = os.path.join(project_folder, 'EPA_Chenega.gdb')
 workspace_geodatabase = os.path.join(project_folder, 'EPA_Chenega_Workspace.gdb')
-
-# Define minimum mapping units in meters squared
-mmu_terrestrial = 506
-mmu_marine = 2023
 
 # Define input datasets
 area_input = os.path.join(project_folder, 'Data_Input/Chenega_ModelArea_1m_3338.tif')
@@ -50,7 +50,6 @@ coastline_input = os.path.join(project_geodatabase, 'Chenega_Coast_LAF_Inverse_S
 manual_input = os.path.join(project_geodatabase, 'Chenega_Manual_Types')
 training_input = os.path.join(project_geodatabase, 'Chenega_Training_Integration')
 waterbody_input = os.path.join(project_geodatabase, 'Chenega_Waterbody_Processed')
-riparian_input = os.path.join(project_geodatabase, 'Chenega_Riparian_Types')
 
 # Define intermediate datasets
 manual_raster = os.path.join(manual_folder, 'manual_raster.tif')
@@ -62,11 +61,6 @@ smooth_raster = os.path.join(output_folder, 'marine_smooth.tif')
 integer_raster = os.path.join(output_folder, 'integer_raster.tif')
 integer_majority = os.path.join(output_folder, 'integer_majority.tif')
 marine_raster = os.path.join(output_folder, 'marine_raster.tif')
-marine_preliminary = os.path.join(workspace_geodatabase, 'marine_preliminary')
-estuarine_feature = os.path.join(workspace_geodatabase, 'estuarine_feature')
-riparian_erase = os.path.join(workspace_geodatabase, 'riparian_erase')
-estuarine_erase = os.path.join(workspace_geodatabase, 'estuarine_erase')
-marine_merge = os.path.join(workspace_geodatabase, 'marine_merge')
 
 # Define output datasets
 marine_output = os.path.join(project_geodatabase, 'Chenega_Marine_Processed')
@@ -222,7 +216,7 @@ nibble_initial = Nibble(water_raster,
 print('\tSmoothing edges...')
 arcpy.conversion.RasterToPolygon(nibble_initial,
                                  water_feature,
-                                 'SIMPLIFY',
+                                 'NO_SIMPLIFY',
                                  'VALUE',
                                  'SINGLE_OUTER_PART',
                                  '')
@@ -352,21 +346,21 @@ iteration_start = time.time()
 # Convert raster to polygon
 print('\tConvert raster to polygon...')
 arcpy.conversion.RasterToPolygon(marine_raster,
-                                 marine_preliminary,
-                                 'SIMPLIFY',
+                                 marine_output,
+                                 'NO_SIMPLIFY',
                                  'VALUE',
                                  'SINGLE_OUTER_PART')
 # Calculate attribute label field
 print('\tBuilding attribute table...')
 label_expression = f'get_response(!gridcode!, {wetlands_dictionary}, "value")'
 label_block = get_attribute_code_block()
-arcpy.management.CalculateField(marine_preliminary,
+arcpy.management.CalculateField(marine_output,
                                 'label',
                                 label_expression,
                                 'PYTHON3',
                                 label_block)
 # Calculate attribute value field
-arcpy.management.AddField(marine_preliminary,
+arcpy.management.AddField(marine_output,
                           'VALUE',
                           'LONG',
                           '',
@@ -377,37 +371,16 @@ arcpy.management.AddField(marine_preliminary,
                           'NON_REQUIRED',
                           '')
 value_expression = f'get_response(!label!, {wetlands_dictionary}, "key")'
-arcpy.management.CalculateField(marine_preliminary,
+arcpy.management.CalculateField(marine_output,
                                 'VALUE',
                                 value_expression,
                                 'PYTHON3',
                                 label_block)
 print('\tDeleting extraneous fields...')
-arcpy.management.DeleteField(marine_preliminary,
+arcpy.management.DeleteField(marine_output,
                              ['VALUE',
                               'label'],
                              'KEEP_FIELDS')
-# Create estuarine feature
-print('\tCreating estuarine feature...')
-estuarine_layer = 'estuarine_layer'
-arcpy.management.MakeFeatureLayer(manual_input, estuarine_layer)
-estuarine_selection = 'VALUE = 25'
-arcpy.management.SelectLayerByAttribute(estuarine_layer,
-                                        'NEW_SELECTION',
-                                        estuarine_selection,
-                                        'NON_INVERT')
-arcpy.management.CopyFeatures(estuarine_layer, estuarine_feature)
-# Integrate manual types
-print('\tIntegrating manual types...')
-arcpy.analysis.PairwiseErase(marine_preliminary, riparian_input, riparian_erase)
-arcpy.analysis.PairwiseErase(riparian_erase, estuarine_feature, estuarine_erase)
-arcpy.management.Merge([estuarine_erase, riparian_input, estuarine_feature], marine_merge)
-arcpy.analysis.PairwiseDissolve(marine_merge,
-                                marine_output,
-                                'VALUE',
-                                '',
-                                'SINGLE_PART',
-                                '')
 end_timing(iteration_start)
 
 # Delete intermediate datasets
@@ -425,13 +398,3 @@ if arcpy.Exists(integer_raster) == 1:
     arcpy.management.Delete(integer_raster)
 if arcpy.Exists(marine_raster) == 1:
     arcpy.management.Delete(marine_raster)
-if arcpy.Exists(marine_preliminary) == 1:
-    arcpy.management.Delete(marine_preliminary)
-if arcpy.Exists(estuarine_feature) == 1:
-    arcpy.management.Delete(estuarine_feature)
-if arcpy.Exists(riparian_erase) == 1:
-    arcpy.management.Delete(riparian_erase)
-if arcpy.Exists(estuarine_erase) == 1:
-    arcpy.management.Delete(estuarine_erase)
-if arcpy.Exists(marine_merge) == 1:
-    arcpy.management.Delete(marine_merge)
